@@ -11,7 +11,7 @@ For a fun read on the Full House Model see our three-part series:
 
 For technical details on the Full House Model, see:  yan2022fullhouse.pdf
 
-For construction of the MLB eligible population, see MLB_eligible_pop.html
+For construction of the MLB eligible population, see: MLB_eligible_pop.html
 
 
 
