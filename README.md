@@ -1,9 +1,9 @@
 
-# Supplemental materials for the era-adjusted baseball statistics website/app 
+# Supplemental materials for the era-adjusted baseball statistics [website/app](https://eckeraadjustment.web.illinois.edu/)
 
 Era-adjustment is made via [Full House Modeling](https://arxiv.org/abs/2207.11332). This model computes era-adjusted statistics through a principled balancing of how well a player performed "vs their peers" and the size of the MLB eligible population.
 
-## Version 2.0 (full details coming soon)
+## Version 2.0 (full details and updated website coming soon)
 
 We present a new version of the Full House Model with:- a new and better justified [MLB eligible population calculation](https://htmlpreview.github.io/?https://github.com/ecklab/era-adjustment-app-supplement/blob/main/MLBeligiblepop.html)- an improved methodology for evaluating careers- data through the 2022 season- removal of rotation adjustments
 
