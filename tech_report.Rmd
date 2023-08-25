@@ -2450,17 +2450,45 @@ hist(m_300, main = 'compare the largest 300 talents')
 
 ```
 
-The result below demonstrates that the BA's average and standard deviation were essentially the same in 1997 and 1998. 
+In this part, we compare the BA before and in the expansion seasons and see if there is a significant difference between them. The expansion seasons are collected from [Wikipedia](https://en.wikipedia.org/wiki/Major_League_Baseball) and they are 1879, 1892, 1900, 1901, 1961, 1962, 1969, 1977, 1993, and 1998. We compute the average and standard deviation of full-time batters' BA before and in the expansion seasons and the results are shown below. 
 
 ```{r echo=FALSE}
-library(Lahman)
-foo <- Batting %>% filter(yearID %in% c(1997, 1998)) %>%
-  filter(AB >= 324) %>%
-  mutate(BA = H/AB) %>%
-  dplyr::select(yearID, playerID, BA, AB)
-foo %>% group_by(yearID) %>%
-  summarise(mBA = mean(BA), sdBA = sd(BA))
+#library(Lahman)
+#foo <- Batting %>% filter(yearID %in% c(1997, 1998)) %>%
+#  filter(AB >= 324) %>%
+#  mutate(BA = H/AB) %>%
+#  dplyr::select(yearID, playerID, BA, AB)
+#foo %>% group_by(yearID) %>%
+#  summarise(mBA = mean(BA), sdBA = sd(BA))
+
+batters <- bat_dat
+batters <- merge(batters, cutoff, by = 'yearID')
+batters <- batters %>% select(playerID, yearID, name, AB, PA, H, thres) %>%
+  mutate(comp = ifelse(AB != 0, H / AB, 0), full_time = ifelse(PA >= thres, 'Y', 'N'))
+batters_schell <- do.call(rbind, mclapply(years, mc.cores = ncores, FUN = function(xx){
+    int<- batters %>% filter(yearID == xx)
+    lg_avg <- sum(int$H)/sum(int$AB)
+    int %>% mutate(comp = (H + lg_avg * 25)/(AB + 25))
+  }))
+batters_avg_sd <- batters_schell %>% filter(full_time == 'Y') %>% group_by(yearID) %>%
+  summarise(mean = round(mean(comp),3), sd = round(sd(comp),3))
+
+before_yearID <- c(1878, 1891, 1899, 1900, 1960, 1961, 1968, 1976, 1992, 1997)
+after_yearID <- before_yearID + 1
+batters_avg_sd_before <- batters_avg_sd %>% filter(yearID %in% before_yearID)
+batters_avg_sd_after <- batters_avg_sd %>% filter(yearID %in% after_yearID)
+
+knitr::kable(cbind(batters_avg_sd_before, batters_avg_sd_after))
 ```
+
+The average and standard error of the difference between the full-time batters' BA before and in the expansion seasons are shown below.
+
+```{r echo=FALSE}
+knitr::kable(data.frame(avg = mean(batters_avg_sd_before$mean - batters_avg_sd_after$mean), 
+                        se = sd(batters_avg_sd_before$mean - batters_avg_sd_after$mean)/(sqrt(10))))
+```
+
+
 
 We also show Willie Mays's seasonal bWAR per game in his 22 years MLB career from 1951 to 1973 season except the 1953 season. The red dots represent the seasons that the MLB were experiencing the expansion. The result show that the expansion did not have any significant positive or negative effects on Willie Mays's prime season or the tail of his career. 
 
@@ -15907,14 +15935,28 @@ kable(o)
 ## Table 3: percent of seasons in which BA failed the Shapiro-Wilk test based on different p-value thresholds in the Supplementary materials.
 
 ```{r cache=TRUE, echo=FALSE}
+batters <- bat_dat
+batters <- merge(batters, cutoff, by = 'yearID')
+batters <- batters %>% select(playerID, yearID, name, AB, PA, H, thres) %>%
+  mutate(comp = ifelse(AB != 0, H / AB, 0), full_time = ifelse(PA >= thres, 'Y', 'N'))
+batters_schell <- do.call(rbind, mclapply(years, mc.cores = ncores, FUN = function(xx){
+    int<- batters %>% filter(yearID == xx)
+    lg_avg <- sum(int$H)/sum(int$AB)
+    int %>% mutate(comp = (H + lg_avg * 25)/(AB + 25))
+  }))
 normality <- do.call(rbind, mclapply(years, mc.cores = ncores, FUN = function(xx){
-  m <- batters_talent_AVG %>% filter(yearID == xx, full_time == 'Y')
-  return(c(xx, shapiro.test(m$comp)$p.value))
+  m <- batters_schell %>% filter(yearID == xx, full_time == 'Y')
+  return(data.frame(yearID = xx, p_value = shapiro.test(m$comp)$p.value))
 }))
 
 foo <- data.frame(p_value = c(0.05, 0.1, 0.2, 0.3), 
-                  number_season = sapply(c(0.05, 0.1, 0.2, 0.3), function(x) sum(normality[,2] < x)/152))
+                  number_season = sapply(c(0.05, 0.1, 0.2, 0.3), function(x) round(sum(normality[,2] < x)/152, 2)))
 kable(foo)
+```
+
+```{r echo=FALSE}
+ggplot(normality, aes(x=p_value)) + geom_histogram(binwidth=0.1, aes(y=..density..)) +
+ geom_density() 
 ```
 
 
