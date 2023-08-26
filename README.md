@@ -5,8 +5,9 @@ Era-adjustment is made via [Full House Modeling](https://arxiv.org/abs/2207.1133
 
 ## Version 2.0 (full details and updated website coming soon)
 
-We present a new version of the Full House Model with:- a new and better justified [MLB eligible population calculation](https://htmlpreview.github.io/?https://github.com/ecklab/era-adjustment-app-supplement/blob/main/MLBeligiblepop.html)- an improved methodology for evaluating careers
-- [new fun writeup](https://htmlpreview.github.io/?https://github.com/ecklab/era-adjustment-app-supplement/blob/main/era_adjusted_V2_I.html)- data through the 2022 season- removal of rotation adjustments
+We present a new version of the Full House Model with:- a new and better justified [MLB eligible population calculation](https://htmlpreview.github.io/?https://github.com/ecklab/era-adjustment-app-supplement/blob/main/MLBeligiblepop.html)
+- a new [technical report](https://htmlpreview.github.io/?https://github.com/ecklab/era-adjustment-app-supplement/blob/main/tech_report.html#batters) that goes through important calculations and additional analyses.
+- [a new fun writeup](https://htmlpreview.github.io/?https://github.com/ecklab/era-adjustment-app-supplement/blob/main/era_adjusted_V2_I.html)- data through the 2022 season- removal of rotation adjustments
 
 
 ## Version 1.0 (consistent with [website](https://eckeraadjustment.web.illinois.edu/))
