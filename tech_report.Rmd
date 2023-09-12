@@ -2408,6 +2408,31 @@ kable(cbind(row_name, rbind(ebWAR_efWAR_p, chance_10, chance_25)))
 
 ```
 
+## Histogram of the best 100 and 1000 players by their rookie year
+
+```{r echo = FALSE}
+m_b <- batcar_year %>% 
+  select(name, playerID, ebWAR, rookie_year) %>% filter(rookie_year <= 2005)
+
+m_p <- pitcar_year %>% 
+  select(name, playerID, ebWAR, rookie_year) %>% filter(rookie_year <= 2005)
+
+m_ebWAR<- rbind(m_b, m_p)
+
+index <- which(m_ebWAR$name == "Babe Ruth")
+m_ebWAR$ebWAR[index[1]] <- sum(m_ebWAR$ebWAR[index])
+index <- which(m_ebWAR$name == "Shohei Ohtani")
+m_ebWAR$ebWAR[index[1]] <- sum(m_ebWAR$ebWAR[index])
+m_ebWAR <- m_ebWAR %>% arrange(desc(ebWAR))
+ggplot(m_ebWAR[1:100,], aes(x=rookie_year)) + geom_histogram(binwidth=2, aes(y=after_stat(density))) +
+  geom_density() + labs(title = "Histogram of the best 100 players by their rookie year")
+```
+
+```{r echo=FALSE}
+ggplot(m_ebWAR[1:1000,], aes(x=rookie_year)) + geom_histogram(binwidth=2, aes(y=after_stat(density))) +
+  geom_density() + labs(title = "Histogram of the best 1000 players by their rookie year")
+```
+
 # Discussion
 
 ## Year Effect on the Talent of the Replacement-level Batters
