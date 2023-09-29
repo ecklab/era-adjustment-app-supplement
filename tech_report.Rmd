@@ -1868,7 +1868,7 @@ kable(head(pit_career, 15)) %>%
 ```
 
 
-## Table 1: Top 25 greatest baseball players from different scources. 
+## Table 1: Top 25 greatest baseball players from different scources in the paper. 
 
 ```{r echo=FALSE}
 ## bWAR
@@ -2192,9 +2192,8 @@ kable(cbind(row_name, rbind(combined_OBP, sapply(chance_10, function(x) paste('1
 
 ```
 
-## Table 2: MLB-eligible population throughout the years in the Supplementary materials.
 
-```{r echo=FALSE}
+```{r echo=FALSE, include=FALSE}
 MLBpops <- bat_dat %>% group_by(yearID, lgID) %>% summarise(pops = unique(pops))
 MLBpops_long <- MLBpops %>% pivot_wider(names_from = lgID, values_from = pops)
 MLBpops_long[MLBpops_long$yearID <= 1900, ]$AL <- MLBpops_long[MLBpops_long$yearID <= 1900, ]$NL
@@ -2209,7 +2208,7 @@ kable(o) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 ```
 
-## Table 3: percent of seasons in which BA failed the Shapiro-Wilk test based on different p-value thresholds in the Supplementary materials.
+## Table 2: percent of seasons in which BA failed the Shapiro-Wilk test based on different p-value thresholds in the Supplementary materials.
 
 ```{r echo=FALSE}
 batters <- bat_dat
@@ -2231,6 +2230,7 @@ foo <- data.frame(p_value = c(0.05, 0.1, 0.2, 0.3),
 kable(foo) %>% 
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 ```
+## Figure 1: Histogram of the p-values from Shapiro-Wilk test of normality on the BA distribution in each season in the Supplementary materials.
 
 ```{r echo=FALSE}
 ggplot(normality, aes(x=p_value)) + geom_histogram(binwidth=0.02, aes(y=..density..)) +
@@ -2249,7 +2249,7 @@ rownames(res) <- c('Ty_cobb_1911', 'Tony_Gwynn_1977')
 
 ```
 
-## Table 4: Top 25 BA, OBP and HR leaders in the Supplementary materials.
+## Table 3: Top 25 BA, OBP and HR leaders in the Supplementary materials.
 
 ```{r echo=FALSE}
 rookie_year <- master_batters_nonpara %>% group_by(playerID) %>% 
@@ -2299,7 +2299,7 @@ knitr::kable(cbind(row_name, rbind(BA_OBP_HR, chance_10, chance_25))) %>%
 
 ```
 
-## Table 5: Top 25 bWAR and fWAR leaders for MLB batters in the Supplementary materials.
+## Table 4: Top 25 bWAR and fWAR leaders for MLB batters in the Supplementary materials.
 
 ```{r echo=FALSE}
 zz_bWAR <- (batcar_year %>% arrange(desc(ebWAR))  %>%
@@ -2337,7 +2337,7 @@ kable(cbind(row_name, rbind(ebWAR_efWAR_b, chance_10, chance_25))) %>%
 
 ```
 
-## Table 6: Top 25 IP, ERA, SO leaders in the Supplementary materials.
+## Table 5: Top 25 IP, ERA, SO leaders in the Supplementary materials.
 
 ```{r echo=FALSE}
 rookie_year <- master_pitchers %>% group_by(playerID) %>% 
@@ -2384,7 +2384,7 @@ kable(cbind(row_name, rbind(IP_ERA_K, chance_10, chance_25))) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 ```
 
-## Table 7: Top 25 bWAR and fWAR leaders for MLB pitchers in the Supplementary materials.
+## Table 6: Top 25 bWAR and fWAR leaders for MLB pitchers in the Supplementary materials.
 
 ```{r echo=FALSE}
 zz_bWAR <- (pitcar_year %>% arrange(desc(ebWAR))  %>%
@@ -2486,7 +2486,7 @@ p +  geom_line(aes(x = yearID, y = nn_talent)) + labs(x = 'year', y = 'replaceme
 ```
 
 
-## Year Effect on the Era-adjusted bWAR of the Hypothetical Batters from 2022. 
+## Year Effect on the Era-adjusted WAR of the Hypothetical Batters from 2022
 
 In this section we calculate the bWAR talent of a hypothetical 2022 hitter with 0 bWAR. Then, we compute his era-adjusted bWAR by mapping this hypothetical player to the other seasons from 1871 through 2021. 
 
@@ -2624,6 +2624,8 @@ adj_0_bWAR <- merge(adj_0_bWAR_G, adj_season_G, by = c('ref_year'))
 adj_0_bWAR <- adj_0_bWAR %>% mutate(adj_bWAR = adj_comp * mapped_G) %>% select(ref_year, adj_bWAR)
 
 ```
+
+## Figure 2: Year Effect on the Era-adjusted WAR in the paper. 
 
 ```{r echo=FALSE}
 adj_0_bWAR$adj_bWAR <- ifelse(adj_0_bWAR$adj_bWAR < -2, -2, adj_0_bWAR$adj_bWAR)
@@ -3100,7 +3102,7 @@ dist_2 %>% ggplot(aes(x = yearID, y = dist)) +
 ```
 
 
-## Figure 1: 4 moments of BA in Supplementary Materials
+## Figure 3: 4 moments of BA in paper
 
 This figure below shows that four statistical moments of the batting average distribution from 1871 to 2021 season. Points in red correspond to seasons surrounding the peak of WWII (1941-1946). 
 
@@ -3677,7 +3679,7 @@ m_out$index[m_out$index == 'C'] = 'Normal Distribution'
 m_out$index[m_out$index == 'D'] = 'Folded Normal Distribution'
 ```
 
-## Figure 3: Distribution sensitivity analysis in the paper
+## Figure 2: Distribution sensitivity analysis in the paper
 
 ```{r echo=FALSE, fig.height = 10, fig.width = 20, fig.align = "center"}
 ggplot() + geom_boxplot(data = m_out[1:1000,], mapping = aes(y=V1, x = reorder(case, -rank), color = case), lwd = 1) +
@@ -3695,7 +3697,7 @@ ggplot() + geom_boxplot(data = m_out[1:1000,], mapping = aes(y=V1, x = reorder(c
   facet_grid(cols = vars(index))+ coord_flip()  +  xlab("") + ylab('Number of Players that are Correctly Identified in Top-25 Talents')
 ```
 
-## Table 5: Comparsion between deteriorated estimation regime and Z-scores in the paper.
+## Table 8: Comparsion between deteriorated estimation regime and Z-scores in the Supplementary materials.
 
 ```{r echo=FALSE}
 
@@ -19170,14 +19172,14 @@ kable(o[o$yearID == 1950,c(1,3)]) %>%
 
 ```
 
-## Table 8: bWAR rankings from Full House Model using different talent generating function in the Supplementary materials.
+## Table 9: bWAR rankings from Full House Model using different talent generating function in the Supplementary materials.
 
 ```{r echo=FALSE}
 kable(cbind(rank = seq(1,25), dist_combined))%>% 
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 ```
 
-## Table 9: BA of Tony Gwynn in the 1997 season minus the BA of Ty Cobb in the 1911 season under different configurations before or after applying the smoothing and trimming method in the Supplementary materials. 
+## Table 10: BA of Tony Gwynn in the 1997 season minus the BA of Ty Cobb in the 1911 season under different configurations before or after applying the smoothing and trimming method in the Supplementary materials. 
 
 The table shows the value of the BA of Tony Gwynn in the 1997 season minus the BA of Ty Cobb in the 1911 season under different configurations before or after applying the smoothing and trimming method. The Park Factor column indicates whether we apply the park-factor adjustment to the BA. The Population column indicates the population changes we apply to the MLB-eligible population. The Increase shows we add 10\% for pre-integration seasons; The Decrease shows we deduct 10\% for the years prior to 1980 due to the economic effect; The Normal shows we use the normal MLB-eligible population. The Distribution column indicates we use parametric distribution and non-parametric distribution to measure the BA in each season. The League Size column indicates we consider two different league sizes as the number of components in each season. The Historical shows we use historical league size as the number of components in each season. The Fixed shows that we compute the maximum number of components in every season and consider this value as the fixed number of components each season. The Difference after indicates the value of the BA of Tony Gwynn in the 1997 season minus the BA of Ty Cobb in the 1911 season under different configurations after applying the smoothing and trimming method. The Difference before indicates the value of the BA of Tony Gwynn in the 1997 season minus the BA of Ty Cobb in the 1911 season under different configurations before applying the smoothing and trimming method.
 
@@ -19191,7 +19193,7 @@ kable(season_diff) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 ```
 
-## Table 10: career BA of Tony Gwynn minus the career BA of Ty Cobb under different configurations before and after applying the smoothing and trimming method in the Supplementary materials.
+## Table 11: career BA of Tony Gwynn minus the career BA of Ty Cobb under different configurations before and after applying the smoothing and trimming method in the Supplementary materials.
 
 The table shows the value of the career BA of Tony Gwynn minus the career BA of Ty Cobb under different configurations before and after applying the smoothing and trimming method. The Park Factor column indicates whether we apply the park-factor adjustment to the BA. The Population column indicates the population changes we apply to the MLB-eligible population. The Increase shows we add 10\% for pre-integration seasons; The Decrease shows we deduct 10\% for the years prior to 1980 due to the economic effect; The Normal shows we use the normal MLB-eligible population. The Distribution column indicates we use parametric distribution and non-parametric distribution to measure the BA in each season. The League Size column indicates we consider two different league sizes as the number of components in each season. The Historical shows we use historical league size as the number of components in each season. The Fixed shows that we compute the maximum number of components in every season and consider this value as the fixed number of components each season. The Difference after indicates the value of the career BA of Tony Gwynn minus the career BA of Ty Cobb under different configurations after the smoothing and trimming method. The Difference before indicates the value of the career BA of Tony Gwynn minus the career BA of Ty Cobb under different configurations before the smoothing and trimming method. 
 
@@ -20186,7 +20188,7 @@ kable(career_diff) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 ```
 
-## Table 11: career bWAR of Willie Mays minus the career bWAR of Babe Ruth under different configurations before and after applying the smoothing and trimming method in the Supplementary materials.
+## Table 12: career bWAR of Willie Mays minus the career bWAR of Babe Ruth under different configurations before and after applying the smoothing and trimming method in the Supplementary materials.
 
 The table shows the value of career bWAR of Willie Mays minus the career bWAR of Babe Ruth under different configurations before and after applying the smoothing and trimming method. The Population column indicates the population changes we apply to the MLB-eligible population. The Increase shows we add 10\% for pre-integration seasons; The Decrease shows we deduct 10\% for the years prior to 1980 due to the economic effect; The Normal shows we use the normal MLB-eligible population. The League Size column indicates we consider two different league sizes as the number of components in each season. The Historical shows we use historical league size as the number of components in each season. The Fixed shows that we compute the maximum number of components in every season and consider this value as the fixed number of components each season. The Difference after indicates the value of the career bWAR of Willie Mays minus the career bWAR of Babe Ruth under different configurations after applying the smoothing and trimming method. The Difference before indicates the value of the career bWAR of Willie Mays minus the career bWAR of Babe Ruth under different configurations before applying the smoothing and trimming method.
 
