@@ -1,0 +1,199 @@
+---
+title: "Tech-Report for Michael Stein's Flexible Behavior in Both Tails Model"
+output: html_document
+date: "2023-08-09"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction
+
+We will go through our results and two problems we encounter when we compute the era-adjusted bWAR using the [Michael Stein's model](https://onlinelibrary.wiley.com/doi/abs/10.1002/env.2658). Since the source code writen by Chris Geoga for Michael Stein's lexible behavior in both tails model is employed in the Julia environment, we will display our results from Julia environment. 
+
+# Results
+
+When we compute the era-adjusted bWAR using the Michael Stein's model, we see our findings are not consistent with the basic baseball knowledge. For example, Willie Stargell in 1971 has larger bWAR talents scores than Mookie Betts in 2018 from our results. This does not make sense because Mookie Betts in 2018 has higher bWAR with larger talent pool than Willie Stargell in 1971. Also Mookie Betts in 2018 stands farther away from his peers than Willie Stargell in 1971. The table below shows the data from our findings using the Michael Stein's model. 'dis_2nd' shows the difference between the player to the second best batters in bWAR. 'dis_3rd' shows the difference between the player to the third best batters in bWAR. We have spotted similar problems in this dataset when using Michael Stein's model. 
+
+```{r echo=FALSE}
+library(xtable)
+tab <- data.frame(name = c('Willie Stargell', 'Mookie Betts'), 
+                  year = c(1971, 2018), 
+                  bWAR = c(7.92, 10.68), 
+                  pops = c(8.3e6, 1.6e7), 
+                  dis_2nd = c(0.4, 0.8),
+                  dis_3rd = c(0.6, 2.8), 
+                  talent = c(3.26e6, 3.21e6))
+knitr::kable(tab)
+```
+
+
+# Restoration Problem
+
+We select full-time pitchers' bWAR in 1874 as the component in our Full House Model system. When we attempt to find the Maximum Likelihood Estimator(MLE) using the function 'fitstein_ipopt_robust' from the 'steinmodel.jl', the Julia displays the following problem: 
+
+![Figure 1: Restoration](restoration.png)
+
+We set the initialization number is 500 and maximum number of iteration is 1000. 
+
+# Optimation Problem
+
+We use the same dataset in the last problem and we increase the initialization number to 1000. Then we get the following problem: 
+
+![Figure 2: Restoration](optimation.png)
+
+# Appendix
+
+Here is the Julia code we use to compute the MLE. 
+
+```{julia, eval=FALSE}
+using CSV
+using DelimitedFiles
+using DataFrames
+using Distributions
+using JLD
+using StatsBase
+
+cd("/Users/yanshen/Desktop/PhD_UIUC/ProfEck/baseball/pitching/stein/steinextremes")
+
+include("steinmodel.jl")
+
+batters = DataFrame(CSV.read("batters_combined_b.csv"))
+
+function Ftilde(y)
+    (status, mle, mle_hessian) = fitstein_ipopt_robust(y, 500, INIT_TDIST_V2, maxit=1000)
+    fitted_quants = map(z->steincdf(z, mle), y)
+    return fitted_quants
+end
+
+function order_pbino(p, k, n)
+    b = Binomial(n, p)
+    return sum(pdf.(b, collect(k:n)))
+end
+
+function order_bino_vec(p)
+    p  = sort!(p)
+    n = length(p)
+    res = zeros(n)
+    for i = 1:n
+        res[i] = order_pbino(p[i], i, n)
+    end
+    return res
+end
+
+function order_Pareto_vec(u, alpha, npop)
+    n = length(u)
+    if length(npop) == 1
+        npop = fill(npop,n)
+    end
+    res = zeros(n)
+    for i = 1:n
+        res[i] = quantile.(Pareto(alpha), quantile.(Beta(i + npop[i] - n, n+1-i), u[i]))
+    end
+    return res
+end
+
+function map_Pareto_vals_vec(x, alpha, npop)
+    n = length(x)
+    if length(npop) == 1
+        npop = fill(npop,n)
+    end
+    res = zeros(n)
+    for i = 1:n
+        res[i] = cdf(Beta(i + npop[i] - n, n+1-i), cdf(Pareto(alpha), x[i]))
+    end
+    return res
+end
+
+function order_qempirical(u, y)
+    n = length(u)
+    q = zeros(n)
+    for i = 1:n
+        q[i] = quantile.(Beta(i, n+1-i), u[i])
+    end
+    (status, mle, mle_hessian) = fitstein_ipopt_robust(y, 200, INIT_TDIST_V2, maxit=1000)
+    return last.(map(z->steinquantile(z,mle), q))
+end
+
+foo = sort!(filter(:yearID => yearID -> yearID == 1967, batters), :WAR)
+m = filter(:PA => PA -> PA >= 75, foo)[:,"PA"]
+thres = median(m)
+y = filter(:PA => PA -> PA >= (thres-2), foo)
+y_star  = filter(:PA => PA -> PA < thres, foo)
+n = nrow(y)
+n_star = nrow(y_star)
+(status, mle, mle_hessian) = fitstein_ipopt_robust(y[:,"WAR"], 200, INIT_TDIST_V2, maxit=1000)
+p = map(z->steincdf(z, mle), y[:,"WAR"])
+p_star = map(z->steincdf(z, mle), y_star[:,"WAR"])
+u = order_bino_vec(p)
+WAR_talent = order_Pareto_vec(u, 1.16, y[:, "pops"])
+WAR_leader_board = hcat(y, WAR_talent)
+# calculate the war talent for non-full-time players
+
+for i in 1:n_star
+    p = map(z->steincdf(z, mle), y[:,"WAR"])
+    p_star = map(z->steincdf(z, mle), y_star[:,"WAR"])
+    new_p = sort!(push!(p, p_star[i]))
+    pos = findall(x -> x == p_star[i],new_p)[1]
+    pops = mean(y[:,"pops"])
+    u = order_bino_vec(new_p)
+    WAR_talent = order_Pareto_vec(u, 1.16, pops)[pos]
+    WAR_talent = [WAR_talent]
+    WAR_leader_board = vcat(WAR_leader_board, hcat(DataFrame(y_star[i,:]), WAR_talent))
+end
+
+WAR_batter_best = WAR_leader_board
+
+for i in vcat(1871:1966, 1968:2019)
+    foo = sort!(filter(:yearID => yearID -> yearID == i, batters), :WAR)
+    m = filter(:PA => PA -> PA >= 75, foo)[:,"PA"]
+    thres = median(m)
+    y = filter(:PA => PA -> PA >= thres, foo)
+    y_star  = filter(:PA => PA -> PA < thres, foo)
+    n = nrow(y)
+    n_star = nrow(y_star)
+    (status, mle, mle_hessian) = fitstein_ipopt_robust(y[:,"WAR"], 200, INIT_TDIST_V2, maxit=1000)
+    p = map(z->steincdf(z, mle), y[:,"WAR"])
+    p_star = map(z->steincdf(z, mle), y_star[:,"WAR"])
+    u = order_bino_vec(p)
+    WAR_talent = order_Pareto_vec(u, 1.16, y[:, "pops"])
+    WAR_leader_board = hcat(y, WAR_talent)
+    # calculate the war talent for non-full-time players
+
+    for j in 1:n_star
+        p = map(z->steincdf(z, mle), y[:,"WAR"])
+        p_star = map(z->steincdf(z, mle), y_star[:,"WAR"])
+        new_p = sort!(push!(p, p_star[j]))
+        pos = findall(x -> x == p_star[j],new_p)[1]
+        pops = mean(y[:,"pops"])
+        u = order_bino_vec(new_p)
+        WAR_talent = order_Pareto_vec(u, 1.16, pops)[pos]
+        WAR_talent = [WAR_talent]
+        WAR_leader_board = vcat(WAR_leader_board, hcat(DataFrame(y_star[j,:]), WAR_talent))
+    end
+
+    WAR_batter_best = vcat(WAR_batter_best, WAR_leader_board)
+end
+
+WAR_batter_best = sort!(WAR_batter_best, :x1, rev = true)
+print(WAR_batter_best[1:25,:])
+
+
+pitchers = DataFrame(CSV.read("pitchers_combined_b.csv"))
+foo = sort!(filter(:yearID => yearID -> yearID == 1874, pitchers), :WAR)
+m = filter(:IPouts => IPouts -> IPouts >= 100, foo)[:,"IPouts"]
+thres = median(m)
+y = filter(:IPouts => IPouts -> IPouts >= (thres), foo)
+n = nrow(y)
+(status, mle, mle_hessian) = fitstein_ipopt_robust(y[:,"WAR"],500, INIT_TDIST_V2, maxit=1000)
+(status, mle, mle_hessian) = fitstein_ipopt_robust(y[:,"WAR"],1000, INIT_TDIST_V2, maxit=1000)
+
+```
+
+
+
+
+
+
+
