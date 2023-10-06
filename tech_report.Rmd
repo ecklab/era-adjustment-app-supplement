@@ -1,7 +1,6 @@
 ---
 title: "Technical Report: Full House Model in R"
 date: "Version 2"
-author: "Shen Yan, Adrian Burgos Jr., Christopher Kinson,  and Daniel J. Eck"
 output:
   html_document:
     toc: true
