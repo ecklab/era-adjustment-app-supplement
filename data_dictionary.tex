@@ -1,0 +1,140 @@
+\documentclass[11pt]{article}
+\usepackage[english]{babel}
+\usepackage{graphicx}
+\usepackage{framed}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{enumerate}
+\usepackage{graphicx} % Allows including image
+\usepackage{hyperref}
+\hypersetup{
+  linkcolor  = blue,
+  citecolor  = blue,
+  urlcolor   = blue,
+  colorlinks = true,
+} % color setup
+\usepackage[utf8]{inputenc}
+\usepackage[top=1 in,bottom=1in, left=0.5 in, right=1 in]{geometry}
+\usepackage{float} % for "H" placement specifier
+\usepackage[authoryear]{natbib}
+\usepackage{indentfirst}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{float}
+\usepackage{array}
+
+\title{\bf Data Dictionary for Comparing baseball players across Eras via the Novel Full House Model}
+
+
+\begin{document}
+\maketitle
+
+\begin{table}[H]
+\centering
+\scalebox{0.6}{
+\begin{tabular}{|l|l|l|l|}
+ \hline
+ Data Name & Description  & Type & Sample\\ 
+ \hline
+ \hline
+ playerID & Baseball-Reference ID for baseball players  & character & aardsda01 \\
+ \hline
+ yearID & the Season that players played in  & integer & 2022 \\
+ \hline
+ name & the First name and Last name of players  & character & David Aardsma \\
+ \hline
+ age & the Age of the player in that season  & integer & 22 \\
+ \hline
+ G & the number of Games that the player played in that season  & integer & 11 \\
+ \hline
+ lgID & the League that the player played in  & character & NL \\
+ \hline
+ teamID & the Team that the player played in  & character & SFG \\
+ \hline
+ full\_time & the variable indicates whether the player is a full-time player  & character & Y \\
+ \hline
+ PA & the Plate Appearance that a batter achieves in that season  & integer & 0 \\
+ \hline
+ IP & the Innings Pitched that a pitcher achieves in that season  & numeric & 10.2 \\
+ \hline
+ AB & the At-Bat that a batter achieves in that season  & integer & 0 \\
+ \hline
+ BB & the Walks or Walks allowed that a player achieves in that season  & integer & 0 \\
+ \hline
+ obs\_hits & the Hit that a batter achieves in that season before applying park-factor adjustment & integer & 0 \\
+ \hline
+ obs\_H & the Hit allowed that a pitcher achieves in that season before applying park-factor adjustment & integer & 0 \\
+ \hline
+ obs\_HR & the Home Run or Home Run allowed that a player achieves in that season before applying park-factor adjustment & integer & 0 \\
+ \hline
+ obs\_ER & the Earned Run that a pitcher achieves in that season before applying park-factor adjustment & integer & 0 \\
+ \hline
+ HBP & the Hit-By-Pitch or Hit-By-Pitch allowed that the player achieves in that season & integer & 0 \\
+ \hline
+ SH & the Sacrifice Bunt that a batter achieves in that season & integer & 0 \\
+ \hline
+ SF & the Sacrifice Fly that a batter achieves in that season & integer & 0 \\
+ \hline
+ H & the Hit that a batter achieves in that season after applying park-factor adjustment & numeric & 0 \\
+ \hline
+ HR & the Home Run that a batter achieves in that season after applying park-factor adjustment & numeric & 0 \\
+ \hline
+ SO & the Strikeout that a pitcher achieves in that season & integer & 5 \\
+ \hline
+ ER & the Earned Run that a pitcher achieves in that season after applying park-factor adjustment & numeric & 7.98 \\
+ \hline
+ HR\_PF & the Home Run allowed that a pitcher achieves in that season after applying park-factor adjustment & numeric & 1.06 \\
+ \hline
+ H\_PF & the Hits that a pitcher achieves in that season after applying park-factor adjustment & numeric & 19.75 \\
+ \hline
+ bWAR & the Baseball-Reference Win Above Replacement that a player achieves in that season & numeric & 0 \\
+ \hline
+ fWAR & the Fangraphs Win Above Replacement that a player achieves in that season & numeric & 0 \\
+ \hline
+ pops & the MLB-eligible population in that season & integer & 13160690 \\
+ \hline
+ NL\_pop & the National League MLB-eligible population in that season & integer & 240569 \\
+ \hline
+ AL\_pop & the American League MLB-eligible population in that season & integer & 240569 \\
+ \hline
+ adj\_BB & the Era-Adjusted Walks in that season that a batter achieves before applying smoothing and trimming & numeric & 0 \\
+ \hline
+ adj\_AVG & the Era-Adjusted Batting Average in that season that a batter achieves before applying smoothing and trimming & numeric & 0.188 \\
+ \hline
+ adj\_HR & the Era-Adjusted Home Run in that season that a batter achieves before applying smoothing and trimming & numeric & 0 \\
+ \hline
+ adj\_AB & the Era-Adjusted At-Bat in that season that a batter achieves before applying smoothing and trimming & numeric & 2 \\
+ \hline
+ adj\_bWAR & the Era-Adjusted bWAR in that season that a batter achieves before applying smoothing and trimming & numeric & -0.11 \\
+ \hline
+ adj\_fWAR & the Era-Adjusted fWAR in that season that a batter achieves before applying smoothing and trimming & numeric & -0.10 \\
+ \hline
+ adj\_OBP & the Era-Adjusted On-Base Percentage in that season that a batter achieves before applying smoothing and trimming & numeric & 0.188 \\
+ \hline
+ mapped\_PA & the adjusted PA computed from common mapping environment using quantile mapping method & integer & 2 \\
+ \hline
+ mapped\_G & the adjusted G computed from common mapping environment using quantile mapping method & integer & 4 \\
+ \hline
+ mapped\_G\_bWAR & the bWAR-adjusted G computed from common mapping environment using quantile mapping method & integer & 4 \\
+ \hline
+ mapped\_G\_fWAR & the fWAR-adjusted G computed from common mapping environment using quantile mapping method & integer & 4 \\
+ \hline
+ mapped\_IP & the adjusted IP computed from common mapping environment using quantile mapping method & integer & 4 \\
+ \hline
+ adj\_ERA & the Era-Adjusted ER Average in that season that a pitcher achieves before applying smoothing and trimming & numeric & 5.524 \\
+ \hline
+ adj\_SO & the Era-Adjusted SO in that season that a pitcher achieves before applying smoothing and trimming & numeric & 5.524 \\
+ \hline
+ ebWAR & the Era-Adjusted bWAR in that season that a player achieves after applying smoothing and trimming & numeric & 153.49 \\
+ \hline
+ efWAR & the Era-Adjusted fWAR in that season that a player achieves after applying smoothing and trimming & numeric & 153.49 \\
+ \hline
+\end{tabular}
+}
+\label{Tab:dictionary}
+\caption{Data dictionary for all the variables appear on the paper and supplementary materials}
+\end{table}
+
+\end{document}
