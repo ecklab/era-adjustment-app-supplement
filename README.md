@@ -5,7 +5,7 @@ Era-adjustment is made via [Full House Modeling](https://arxiv.org/abs/2207.1133
 
 ## Version 2.0 (full details and updated website coming soon)
 
-We present a new version of the Full House Model with:- A new and better justified [MLB eligible population calculation](https://htmlpreview.github.io/?https://github.com/ecklab/era-adjustment-app-supplement/blob/main/writeups/MLBeligiblepop.html)
+We present a new version of the Full House Model with:- A new and better justified [estimation of the talent pool over time](https://htmlpreview.github.io/?https://github.com/ecklab/era-adjustment-app-supplement/blob/main/writeups/MLBeligiblepop.html)
 - A new [technical report](https://htmlpreview.github.io/?https://github.com/ecklab/era-adjustment-app-supplement/blob/main/tech-reports/tech-report.html) that goes through important calculations and additional analyses.
 - A new [detailed writeup](https://htmlpreview.github.io/?https://github.com/ecklab/era-adjustment-app-supplement/blob/main/writeups/era_adjusted_V2_I.html) that highlights some results and discussions based on our era-adjusted statistics.- Data through the 2022 season- Removal of rotation adjustments
 
@@ -19,7 +19,7 @@ For a fun read on the Full House Model see our three-part series: [article I](ht
 
 Technical details on the Full House Model can be seen [here](https://arxiv.org/abs/2207.11332).
 
-Our original calculation of the MLB eligible population can be seen [here](https://htmlpreview.github.io/?https://github.com/ecklab/era-adjustment-app-supplement/blob/main/writeups/MLB_eligible_pop.html).
+Our original estimation of the talent pool can be seen [here](https://htmlpreview.github.io/?https://github.com/ecklab/era-adjustment-app-supplement/blob/main/writeups/MLB_eligible_pop.html).
 
 
 
