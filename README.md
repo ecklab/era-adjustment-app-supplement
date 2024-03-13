@@ -3,15 +3,15 @@
 
 Era-adjustment is made via [Full House Modeling](https://arxiv.org/abs/2207.11332). This model computes era-adjusted statistics through a principled balancing of how well a player performed "vs their peers" and the size of the MLB eligible population.
 
-## Version 2.0 (full details and updated website coming soon)
+## Version 2.0 (consistent with [website](https://eckeraadjustment.web.illinois.edu/))
 
 We present a new version of the Full House Model with:- A new and better justified [estimation of the talent pool over time](https://htmlpreview.github.io/?https://github.com/ecklab/era-adjustment-app-supplement/blob/main/writeups/MLBeligiblepop.html)
 - A new [technical report](https://htmlpreview.github.io/?https://github.com/ecklab/era-adjustment-app-supplement/blob/main/tech-reports/tech-report.html) that goes through important calculations and additional analyses.
-- A new [detailed writeup](https://htmlpreview.github.io/?https://github.com/ecklab/era-adjustment-app-supplement/blob/main/writeups/era_adjusted_V2_I.html) that highlights some results and discussions based on our era-adjusted statistics.- Data through the 2022 season- Removal of rotation adjustments
+- A new [detailed writeup](https://htmlpreview.github.io/?https://github.com/ecklab/era-adjustment-app-supplement/blob/main/writeups/era_adjusted_V2_I.html) that highlights some results and discussions based on our era-adjusted statistics.- Data through the 2023 season- Removed rotation adjustments
+- Removed smoothing (although we might want to reconsider)
 
 
-## Version 1.0 (consistent with [website](https://eckeraadjustment.web.illinois.edu/))
-
+## Version 1.0
 
 The app contains several era-adjusted statistics for baseball players which are obtained from the Full House Model. This model computes era-adjusted statistics through a principled balancing of how well a player performed "vs their peers" and the size of the MLB eligible population. Under this model, great all-time statistics requires that an MLB player is both better than their peers and played during a time in which the MLB eligible population is large. In this way, the model constructs an even playing field that extends across eras.
 
