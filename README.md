@@ -7,7 +7,7 @@ Era-adjustment is made via [Full House Modeling](https://arxiv.org/abs/2207.1133
 
 We present a new version of the Full House Model with:- A new and better justified [estimation of the talent pool over time](https://htmlpreview.github.io/?https://github.com/ecklab/era-adjustment-app-supplement/blob/main/writeups/MLBeligiblepop.html)
 - A new [detailed writeup](https://htmlpreview.github.io/?https://github.com/ecklab/era-adjustment-app-supplement/blob/main/writeups/era_adjusted_V2_I.html) that highlights some results and discussions based on our era-adjusted statistics.
-- A new [technical report](https://htmlpreview.github.io/?https://github.com/ecklab/era-adjustment-app-supplement/blob/main/tech-reports/tech-report.html) that goes through important calculations and additional analyses.- Data through the 2023 season- Removed rotation adjustments
+- A new [technical report](https://htmlpreview.github.io/?https://github.com/ecklab/era-adjustment-app-supplement/blob/main/tech-reports/tech-report-2023.html) that goes through important calculations and additional analyses.- Data through the 2023 season- Removed rotation adjustments
 - Removed smoothing
 
 
