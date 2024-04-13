@@ -17,9 +17,9 @@ We will go through examples of how our Full House Model era-adjusts batting aver
 
 We first load in relevant software packages and the data. The necessary data are collected from [Baseball-Reference](https://www.baseball-reference.com/), [Fangraphs](https://www.fangraphs.com/) and Github [Chadwick](https://github.com/chadwickbureau). The details of data collection are in the Supplement Materials. The revelant datasets that involved in this technical report can be found in the [Tech_report_data](https://github.com/yanshenlmx/Tech_report_data)
 
-For batters, each row of data consists of a player ID, a year ID, a name, a age, a league ID (lgID), a recorded number of at bats (AB), game(G), plate appearances (PA), a park-factored batting average (BA), a walk (BB), a observed hits (obs_hits), observed home run (obs_HR), a hit-by-pitch (HBP), a sacrifice bunt (SH), a sacrifice fly (SF), a park-factored hits (H), a park-factored home run (HR), a baseball-reference WAR (bWAR), a fangraph WAR (fWAR) and a size of the MLB-eligible population (pops).
+For batters, each row of data consists of a player ID, a year ID, a name, a age, a league ID (lgID), a recorded number of at bats (AB), game(G), plate appearances (PA), a park-factored batting average (BA), a walk (BB), a observed hits (obs_hits), observed home run (obs_HR), a hit-by-pitch (HBP), a sacrifice bunt (SH), a sacrifice fly (SF), a park-factored hits (H), a park-factored home run (HR), a baseball-reference WAR (bWAR), a fangraph WAR (fWAR) and a size of the talent pool (pops).
 
-For pitchers, each row of data consists of a player ID, a year ID, a name, a age, a league ID (lgID), a team ID (teamID), a recorded number of inning pitched (IP) and a game(G), a observed earned run (obs_ER), a observed home run (obs_HR), a observed hits (obs_H), a strikeout (SO), a park-factored earned run (ER), a park-factored home run (HR_PF), a park-factored hits (H_PF), a walk (BB), a hit-by-pitch (HBP), a baseball-reference WAR (bWAR), a fangraph WAR (fWAR) and a size of the MLB-eligible population (pops).
+For pitchers, each row of data consists of a player ID, a year ID, a name, a age, a league ID (lgID), a team ID (teamID), a recorded number of inning pitched (IP) and a game(G), a observed earned run (obs_ER), a observed home run (obs_HR), a observed hits (obs_H), a strikeout (SO), a park-factored earned run (ER), a park-factored home run (HR_PF), a park-factored hits (H_PF), a walk (BB), a hit-by-pitch (HBP), a baseball-reference WAR (bWAR), a fangraph WAR (fWAR) and a size of the talent pool (pops).
 
 ```{r message=FALSE, warning=FALSE}
 rm(list=ls())
@@ -1212,6 +1212,10 @@ AVG_part <- mapped_batters_AVG_para %>%
   
 ```
 
+# Reulsts: 
+
+## batters using non-parametric distribution
+
 The career results for batters uses non-parametric distribution measuring the BA with top 15 bWAR batting leaders. 
 ```{r echo=FALSE}
 library("knitr")
@@ -1219,13 +1223,13 @@ kable(head(bat_career_nonpara, 15)) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 ```
 
+## batters using parametric distribution
+
 The career results for batters uses parametric distribution measuring the BA with top 15 bWAR batting leaders. 
 ```{r echo=FALSE}
 kable(head(bat_career_para, 15)) %>% 
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 ```
-
-# Pitchers
 
 We apply our Full House Model to the bWAR, fWAR, SO, ERA for pitchers using the non-parametric distribution to measure the components. 
 
@@ -1891,17 +1895,18 @@ ERA_part <- mapped_pitchers_ERA %>%
     arrange(desc(ebWAR))
 ```
 
+## pitchers
+
 The career results for pitchers with top 15 bWAR pitching leaders. 
 ```{r echo=FALSE}
 kable(head(pit_career, 15)) %>% 
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 ```
 
-
 ## Top 25 greatest baseball players from different scources. 
 
 ```{r echo=FALSE, include=FALSE}
-## MLB eligible population
+## talent pool
 MLBpops <- bat_dat %>% group_by(yearID, lgID) %>% summarise(pops = unique(pops))
 MLBpops_long <- MLBpops %>% pivot_wider(names_from = lgID, values_from = pops)
 MLBpops_long[MLBpops_long$yearID <= 1900, ]$AL <- MLBpops_long[MLBpops_long$yearID <= 1900, ]$NL
@@ -1987,41 +1992,44 @@ WAR_rankings <- cbind((m_ebWAR%>% arrange(desc(ebWAR)))$name[1:25], (m_efWAR%>% 
 
 colnames(WAR_rankings) <- c('ebWAR', 'efWAR', 'bWAR', 'fWAR', 'ESPN', 'Hall of Stats')
 
-## pre-1950 in top 10
-bat_1950_b <- sum(m_ebWAR %>% arrange(desc(ebWAR)) %>% select(rookie_year) %>% slice(1:10) < 1950)
-bat_1950_f <- sum(m_efWAR %>% arrange(desc(efWAR)) %>% select(rookie_year) %>% slice(1:10) < 1950)
-WAR_rankings <- rbind(WAR_rankings, c(bat_1950_b,bat_1950_f,6,6,6,6))
+# ## pre-1950 in top 10
+# bat_1950_b <- sum(m_ebWAR %>% arrange(desc(ebWAR)) %>% select(rookie_year) %>% slice(1:10) < 1950)
+# bat_1950_f <- sum(m_efWAR %>% arrange(desc(efWAR)) %>% select(rookie_year) %>% slice(1:10) < 1950)
+# WAR_rankings <- rbind(WAR_rankings, c(bat_1950_b,bat_1950_f,6,6,6,6))
+# 
+# ## pre-1950 in top 25
+# bat_1950_b <- sum(m_ebWAR %>% arrange(desc(ebWAR)) %>% select(rookie_year) %>% slice(1:25) < 1950)
+# bat_1950_f <- sum(m_efWAR %>% arrange(desc(efWAR)) %>% select(rookie_year) %>% slice(1:25) < 1950)
+# WAR_rankings <- rbind(WAR_rankings, c(bat_1950_b,bat_1950_f,15,12,11,17))
+# 
+# ## proportion before 1950
+# 
+# n <- MLBpops_decade[MLBpops_decade$year %in% c(1871, seq(1880, 2000, 10), 2005),]
+# p <- n
+# p$population[1] <- n$population[1] /10*9
+# p$population[15] <- n$population[15] /10*5
+# o <- p %>% mutate(population = round(population, 2)) %>% 
+#   mutate(cpp = round(cumsum(p$population)/(sum(p$population)), 3))
+# 
+# WAR_rankings <- rbind(WAR_rankings, rep(o$cpp[o$year == 1950],6))
+# 
+# ## chances of observing old era players in top 10
+# 
+# chance_10 <- round(c(1 / (1 - pbinom(as.numeric(WAR_rankings[26,1])-1, 10, as.numeric(WAR_rankings[28,1]))), 1 / (1 - pbinom(as.numeric(WAR_rankings[26,2])-1, 10, as.numeric(WAR_rankings[28,2]))), 1 / (1 - pbinom(as.numeric(WAR_rankings[26,3])-1, 10, as.numeric(WAR_rankings[28,3]))), 1 / (1 - pbinom(as.numeric(WAR_rankings[26,4])-1, 10, as.numeric(WAR_rankings[28,4]))), 1 / (1 - pbinom(as.numeric(WAR_rankings[26,5])-1, 10, as.numeric(WAR_rankings[28,5]))), 1 / (1 - pbinom(as.numeric(WAR_rankings[26,6])-1, 10, as.numeric(WAR_rankings[28,6])))), 2)
+# 
+# ## chances of observing old era players in top 25
+# 
+# chance_25 <- round(c(1 / (1 - pbinom(as.numeric(WAR_rankings[27,1])-1, 25, as.numeric(WAR_rankings[28,1]))), 1 / (1 - pbinom(as.numeric(WAR_rankings[27,2])-1, 25, as.numeric(WAR_rankings[28,2]))), 1 / (1 - pbinom(as.numeric(WAR_rankings[27,3])-1, 25, as.numeric(WAR_rankings[28,3]))), 1 / (1 - pbinom(as.numeric(WAR_rankings[27,4])-1, 25, as.numeric(WAR_rankings[28,4]))), 1 / (1 - pbinom(as.numeric(WAR_rankings[27,5])-1, 25, as.numeric(WAR_rankings[28,5]))), 1 / (1 - pbinom(as.numeric(WAR_rankings[27,6])-1, 25, as.numeric(WAR_rankings[28,6])))), 2)
+# #
 
-## pre-1950 in top 25
-bat_1950_b <- sum(m_ebWAR %>% arrange(desc(ebWAR)) %>% select(rookie_year) %>% slice(1:25) < 1950)
-bat_1950_f <- sum(m_efWAR %>% arrange(desc(efWAR)) %>% select(rookie_year) %>% slice(1:25) < 1950)
-WAR_rankings <- rbind(WAR_rankings, c(bat_1950_b,bat_1950_f,15,12,11,17))
+# row_name <- data.frame(rank = c(seq(1,25), 'pre-1950 in top 10', 'pre-1950 in top 25', 'proportion before 1950', 'chance in top 10', 'chance in top 10'))
+# 
+# kable(cbind(row_name, rbind(WAR_rankings, sapply(chance_10, function(x) paste('1 in', x)), sapply(chance_25, function(x) paste('1 in', x))))) %>% 
+#   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 
-## proportion before 1950
-
-n <- MLBpops_decade[MLBpops_decade$year %in% c(1871, seq(1880, 2000, 10), 2005),]
-p <- n
-p$population[1] <- n$population[1] /10*9
-p$population[15] <- n$population[15] /10*5
-o <- p %>% mutate(population = round(population, 2)) %>% 
-  mutate(cpp = round(cumsum(p$population)/(sum(p$population)), 3))
-
-WAR_rankings <- rbind(WAR_rankings, rep(o$cpp[o$year == 1950],6))
-
-## chances of observing old era players in top 10
-
-chance_10 <- round(c(1 / (1 - pbinom(as.numeric(WAR_rankings[26,1])-1, 10, as.numeric(WAR_rankings[28,1]))), 1 / (1 - pbinom(as.numeric(WAR_rankings[26,2])-1, 10, as.numeric(WAR_rankings[28,2]))), 1 / (1 - pbinom(as.numeric(WAR_rankings[26,3])-1, 10, as.numeric(WAR_rankings[28,3]))), 1 / (1 - pbinom(as.numeric(WAR_rankings[26,4])-1, 10, as.numeric(WAR_rankings[28,4]))), 1 / (1 - pbinom(as.numeric(WAR_rankings[26,5])-1, 10, as.numeric(WAR_rankings[28,5]))), 1 / (1 - pbinom(as.numeric(WAR_rankings[26,6])-1, 10, as.numeric(WAR_rankings[28,6])))), 2)
-
-## chances of observing old era players in top 25
-
-chance_25 <- round(c(1 / (1 - pbinom(as.numeric(WAR_rankings[27,1])-1, 25, as.numeric(WAR_rankings[28,1]))), 1 / (1 - pbinom(as.numeric(WAR_rankings[27,2])-1, 25, as.numeric(WAR_rankings[28,2]))), 1 / (1 - pbinom(as.numeric(WAR_rankings[27,3])-1, 25, as.numeric(WAR_rankings[28,3]))), 1 / (1 - pbinom(as.numeric(WAR_rankings[27,4])-1, 25, as.numeric(WAR_rankings[28,4]))), 1 / (1 - pbinom(as.numeric(WAR_rankings[27,5])-1, 25, as.numeric(WAR_rankings[28,5]))), 1 / (1 - pbinom(as.numeric(WAR_rankings[27,6])-1, 25, as.numeric(WAR_rankings[28,6])))), 2)
-#
-
-row_name <- data.frame(rank = c(seq(1,25), 'pre-1950 in top 10', 'pre-1950 in top 25', 'proportion before 1950', 'chance in top 10', 'chance in top 10'))
-
-kable(cbind(row_name, rbind(WAR_rankings, sapply(chance_10, function(x) paste('1 in', x)), sapply(chance_25, function(x) paste('1 in', x))))) %>% 
-  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
-
+row_name <- data.frame(rank = c(seq(1,25)))
+kable(cbind(row_name, WAR_rankings)) %>% 
+   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 ```
 
 
@@ -2079,86 +2087,89 @@ combined_AVG <- cbind(peak_fullhouse$name[1:25], career_fullhouse$name[1:25], Sc
 
 colnames(combined_AVG) <- c('Peak in Full House', 'Career in Full House', 'Schell Method 1', 'Schell Method 2', 'Era-bridging Method', 'Raw Career')
 
-## pre-1950 in top 10
-AVG_peak <- sum(peak_fullhouse %>% select(rookie_year) %>% slice(1:10) < 1950)
-AVG_career <- sum(career_fullhouse %>% select(rookie_year) %>% slice(1:10) < 1950)
-combined_AVG <- rbind(combined_AVG, c(AVG_peak,AVG_career,7,7,6,10))
+# ## pre-1950 in top 10
+# AVG_peak <- sum(peak_fullhouse %>% select(rookie_year) %>% slice(1:10) < 1950)
+# AVG_career <- sum(career_fullhouse %>% select(rookie_year) %>% slice(1:10) < 1950)
+# combined_AVG <- rbind(combined_AVG, c(AVG_peak,AVG_career,7,7,6,10))
+# 
+# ## pre-1950 in top 25
+# AVG_peak <- sum(peak_fullhouse %>% select(rookie_year) %>% slice(1:25) < 1950)
+# AVG_career <- sum(career_fullhouse %>% select(rookie_year) %>% slice(1:25) < 1950)
+# combined_AVG <- rbind(combined_AVG, c(AVG_peak,AVG_career,18,15,10,24))
+# 
+# ## proportion before 1950
+# 
+# n <- MLBpops_decade[MLBpops_decade$year %in% c(1871, seq(1880, 2020, 10), 2023),]
+# p <- n
+# p$population[1] <- n$population[1] /10*9
+# p$population[17] <- n$population[17] /10*3
+# o <- p %>% mutate(population = round(population, 2)) %>% 
+#   mutate(cpp = round(cumsum(p$population)/(sum(p$population)), 3))
+# p1 <- o$cpp[o$year == 1950]
+# 
+# n <- MLBpops_decade[MLBpops_decade$year %in% c(1871, seq(1880, 2010, 10), 2012),]
+# p <- n
+# p$population[1] <- n$population[1] /10*9
+# p$population[16] <- n$population[16] /10*2
+# o <- p %>% mutate(population = round(population, 2)) %>% 
+#   mutate(cpp = round(cumsum(p$population)/(sum(p$population)), 3))
+# p2 <- o$cpp[o$year == 1950]
+# 
+# n <- MLBpops_decade[MLBpops_decade$year %in% c(1876, seq(1880, 1980, 10), 1984),]
+# p <- n
+# p$population[1] <- n$population[1] /10*4
+# p$population[13] <- n$population[13] /10*4
+# o <- p %>% mutate(population = round(population, 2)) %>% 
+#   mutate(cpp = round(cumsum(p$population)/(sum(p$population)), 3))
+# p3 <- o$cpp[o$year == 1950]
+# 
+# n <- MLBpops_decade[MLBpops_decade$year %in% c(1876, seq(1880, 1990, 10), 1997),]
+# p <- n
+# p$population[1] <- n$population[1] /10*4
+# p$population[14] <- n$population[14] /10*7
+# o <- p %>% mutate(population = round(population, 2)) %>% 
+#   mutate(cpp = round(cumsum(p$population)/(sum(p$population)), 3))
+# p4 <- o$cpp[o$year == 1950]
+# 
+# n <- MLBpops_decade[MLBpops_decade$year %in% c(1901, seq(1910, 1990, 10), 1996),]
+# p <- n
+# p$population[1] <- n$population[1] /10*1
+# p$population[11] <- n$population[11] /10*6
+# o <- p %>% mutate(population = round(population, 2)) %>% 
+#   mutate(cpp = round(cumsum(p$population)/(sum(p$population)), 3))
+# p5 <- o$cpp[o$year == 1950]
+# 
+# n <- MLBpops_decade[MLBpops_decade$year %in% c(1871, seq(1880, 2010, 10), 2012),]
+# p <- n
+# p$population[1] <- n$population[1] /10*9
+# p$population[16] <- n$population[16] /10*2
+# o <- p %>% mutate(population = round(population, 2)) %>% 
+#   mutate(cpp = round(cumsum(p$population)/(sum(p$population)), 3))
+# p6 <- o$cpp[o$year == 1950]
+# 
+# combined_AVG <- rbind(combined_AVG, c(p1, p2, p3, p4, p5, p6))
+# 
+# ## talent pool range
+# 
+# combined_AVG <- rbind(combined_AVG, c('1871-2023', '1871-2012', '1876-1984', '1876-1997', '1901-1996', '1871-2012'))
+# 
+# ## chances of observing old era batters in top 10
+# 
+# chance_10 <- round(c(1 / (1 - pbinom(as.numeric(combined_AVG[26,1])-1, 10, as.numeric(combined_AVG[28,1]))), 1 / (1 - pbinom(as.numeric(combined_AVG[26,2])-1, 10, as.numeric(combined_AVG[28,2]))), 1 / (1 - pbinom(as.numeric(combined_AVG[26,3])-1, 10, as.numeric(combined_AVG[28,3]))), 1 / (1 - pbinom(as.numeric(combined_AVG[26,4])-1, 10, as.numeric(combined_AVG[28,4]))), 1 / (1 - pbinom(as.numeric(combined_AVG[26,5])-1, 10, as.numeric(combined_AVG[28,5]))), 1 / (1 - pbinom(as.numeric(combined_AVG[26,6])-1, 10, as.numeric(combined_AVG[28,6])))), 2)
+# 
+# 
+# ## chances of observing old era batters in top 25
+# 
+# chance_25 <- round(c(1 / (1 - pbinom(as.numeric(combined_AVG[27,1])-1, 25, as.numeric(combined_AVG[28,1]))), 1 / (1 - pbinom(as.numeric(combined_AVG[27,2])-1, 25, as.numeric(combined_AVG[28,2]))), 1 / (1 - pbinom(as.numeric(combined_AVG[27,3])-1, 25, as.numeric(combined_AVG[28,3]))), 1 / (1 - pbinom(as.numeric(combined_AVG[27,4])-1, 25, as.numeric(combined_AVG[28,4]))), 1 / (1 - pbinom(as.numeric(combined_AVG[27,5])-1, 25, as.numeric(combined_AVG[28,5]))), 1 / (1 - pbinom(as.numeric(combined_AVG[27,6])-1, 25, as.numeric(combined_AVG[28,6])))), 2)
 
-## pre-1950 in top 25
-AVG_peak <- sum(peak_fullhouse %>% select(rookie_year) %>% slice(1:25) < 1950)
-AVG_career <- sum(career_fullhouse %>% select(rookie_year) %>% slice(1:25) < 1950)
-combined_AVG <- rbind(combined_AVG, c(AVG_peak,AVG_career,18,15,10,24))
+# row_name <- data.frame(rank = c(seq(1,25), 'pre-1950 in top 10', 'pre-1950 in top 25', 'proportion before 1950', 'talent pool', 'chance in top 10', 'chance in top 10'))
+# 
+# knitr::kable(cbind(row_name, rbind(combined_AVG, sapply(chance_10, function(x) paste('1 in', x)), sapply(chance_25, function(x) paste('1 in', x))))) %>% 
+#   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 
-## proportion before 1950
-
-n <- MLBpops_decade[MLBpops_decade$year %in% c(1871, seq(1880, 2020, 10), 2023),]
-p <- n
-p$population[1] <- n$population[1] /10*9
-p$population[17] <- n$population[17] /10*3
-o <- p %>% mutate(population = round(population, 2)) %>% 
-  mutate(cpp = round(cumsum(p$population)/(sum(p$population)), 3))
-p1 <- o$cpp[o$year == 1950]
-
-n <- MLBpops_decade[MLBpops_decade$year %in% c(1871, seq(1880, 2010, 10), 2012),]
-p <- n
-p$population[1] <- n$population[1] /10*9
-p$population[16] <- n$population[16] /10*2
-o <- p %>% mutate(population = round(population, 2)) %>% 
-  mutate(cpp = round(cumsum(p$population)/(sum(p$population)), 3))
-p2 <- o$cpp[o$year == 1950]
-
-n <- MLBpops_decade[MLBpops_decade$year %in% c(1876, seq(1880, 1980, 10), 1984),]
-p <- n
-p$population[1] <- n$population[1] /10*4
-p$population[13] <- n$population[13] /10*4
-o <- p %>% mutate(population = round(population, 2)) %>% 
-  mutate(cpp = round(cumsum(p$population)/(sum(p$population)), 3))
-p3 <- o$cpp[o$year == 1950]
-
-n <- MLBpops_decade[MLBpops_decade$year %in% c(1876, seq(1880, 1990, 10), 1997),]
-p <- n
-p$population[1] <- n$population[1] /10*4
-p$population[14] <- n$population[14] /10*7
-o <- p %>% mutate(population = round(population, 2)) %>% 
-  mutate(cpp = round(cumsum(p$population)/(sum(p$population)), 3))
-p4 <- o$cpp[o$year == 1950]
-
-n <- MLBpops_decade[MLBpops_decade$year %in% c(1901, seq(1910, 1990, 10), 1996),]
-p <- n
-p$population[1] <- n$population[1] /10*1
-p$population[11] <- n$population[11] /10*6
-o <- p %>% mutate(population = round(population, 2)) %>% 
-  mutate(cpp = round(cumsum(p$population)/(sum(p$population)), 3))
-p5 <- o$cpp[o$year == 1950]
-
-n <- MLBpops_decade[MLBpops_decade$year %in% c(1871, seq(1880, 2010, 10), 2012),]
-p <- n
-p$population[1] <- n$population[1] /10*9
-p$population[16] <- n$population[16] /10*2
-o <- p %>% mutate(population = round(population, 2)) %>% 
-  mutate(cpp = round(cumsum(p$population)/(sum(p$population)), 3))
-p6 <- o$cpp[o$year == 1950]
-
-combined_AVG <- rbind(combined_AVG, c(p1, p2, p3, p4, p5, p6))
-
-## MLB-eligible population range
-
-combined_AVG <- rbind(combined_AVG, c('1871-2023', '1871-2012', '1876-1984', '1876-1997', '1901-1996', '1871-2012'))
-
-## chances of observing old era batters in top 10
-
-chance_10 <- round(c(1 / (1 - pbinom(as.numeric(combined_AVG[26,1])-1, 10, as.numeric(combined_AVG[28,1]))), 1 / (1 - pbinom(as.numeric(combined_AVG[26,2])-1, 10, as.numeric(combined_AVG[28,2]))), 1 / (1 - pbinom(as.numeric(combined_AVG[26,3])-1, 10, as.numeric(combined_AVG[28,3]))), 1 / (1 - pbinom(as.numeric(combined_AVG[26,4])-1, 10, as.numeric(combined_AVG[28,4]))), 1 / (1 - pbinom(as.numeric(combined_AVG[26,5])-1, 10, as.numeric(combined_AVG[28,5]))), 1 / (1 - pbinom(as.numeric(combined_AVG[26,6])-1, 10, as.numeric(combined_AVG[28,6])))), 2)
-
-
-## chances of observing old era batters in top 25
-
-chance_25 <- round(c(1 / (1 - pbinom(as.numeric(combined_AVG[27,1])-1, 25, as.numeric(combined_AVG[28,1]))), 1 / (1 - pbinom(as.numeric(combined_AVG[27,2])-1, 25, as.numeric(combined_AVG[28,2]))), 1 / (1 - pbinom(as.numeric(combined_AVG[27,3])-1, 25, as.numeric(combined_AVG[28,3]))), 1 / (1 - pbinom(as.numeric(combined_AVG[27,4])-1, 25, as.numeric(combined_AVG[28,4]))), 1 / (1 - pbinom(as.numeric(combined_AVG[27,5])-1, 25, as.numeric(combined_AVG[28,5]))), 1 / (1 - pbinom(as.numeric(combined_AVG[27,6])-1, 25, as.numeric(combined_AVG[28,6])))), 2)
-
-row_name <- data.frame(rank = c(seq(1,25), 'pre-1950 in top 10', 'pre-1950 in top 25', 'proportion before 1950', 'MLB-eligible population', 'chance in top 10', 'chance in top 10'))
-
-knitr::kable(cbind(row_name, rbind(combined_AVG, sapply(chance_10, function(x) paste('1 in', x)), sapply(chance_25, function(x) paste('1 in', x))))) %>% 
+row_name <- data.frame(rank = c(seq(1,25)))
+knitr::kable(cbind(row_name, combined_AVG)) %>% 
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
-
 ```
 
 ## HR rankings from different sources.
@@ -2212,174 +2223,179 @@ combined_HR <- cbind(bar$name[1:25], career_fullhouse_HR_AB$name[1:25], Era_brid
 
 colnames(combined_HR) <- c('Peak in Full House', 'Career in Full House', 'Era-bridging Method', 'PPS detrending method', 'Peak in Schell', 'Career in Schell', 'Raw AB per HR')
 
-## pre-1950 in top 10
-HR_peak <- sum(bar %>% select(rookie_year) %>% slice(1:10) < 1950)
-HR_career <- sum(career_fullhouse_HR_AB %>% select(rookie_year) %>% slice(1:10) < 1950)
-combined_HR <- rbind(combined_HR, c(HR_peak,HR_career,1,7,5,4,3))
-
-## pre-1950 in top 25
-HR_peak <- sum(bar %>% select(rookie_year) %>% slice(1:25) < 1950)
-HR_career <- sum(career_fullhouse_HR_AB %>% select(rookie_year) %>% slice(1:25) < 1950)
-combined_HR <- rbind(combined_HR, c(HR_peak,HR_career,5,12,13,12,5))
-
-## proportion before 1950
-n <- MLBpops_decade[MLBpops_decade$year %in% c(1871, seq(1880, 2020, 10), 2023),]
-p <- n
-p$population[1] <- n$population[1] /10*9
-p$population[17] <- n$population[17] /10*3
-o <- p %>% mutate(population = round(population, 2)) %>% 
-  mutate(cpp = round(cumsum(p$population)/(sum(p$population)), 3))
-p1 <- o$cpp[o$year == 1950]
-
-n <- MLBpops_decade[MLBpops_decade$year %in% c(1871, seq(1880, 2010, 10), 2012),]
-p <- n
-p$population[1] <- n$population[1] /10*9
-p$population[16] <- n$population[16] /10*2
-o <- p %>% mutate(population = round(population, 2)) %>% 
-  mutate(cpp = round(cumsum(p$population)/(sum(p$population)), 3))
-p2 <- o$cpp[o$year == 1950]
-
-n <- MLBpops_decade[MLBpops_decade$year %in% c(1901, seq(1910, 1990, 10), 1996),]
-p <- n
-p$population[1] <- n$population[1] /10*9
-p$population[11] <- n$population[11] /10*6
-o <- p %>% mutate(population = round(population, 2)) %>% 
-  mutate(cpp = round(cumsum(p$population)/(sum(p$population)), 3))
-p3 <- o$cpp[o$year == 1950]
-
-n <- MLBpops_decade[MLBpops_decade$year %in% c(1871, seq(1880, 1990, 10), 1993),]
-p <- n
-p$population[1] <- n$population[1] /10*9
-p$population[14] <- n$population[14] /10*3
-o <- p %>% mutate(population = round(population, 2)) %>% 
-  mutate(cpp = round(cumsum(p$population)/(sum(p$population)), 3))
-p4 <- o$cpp[o$year == 1950]
-
-n <- MLBpops_decade[MLBpops_decade$year %in% c(1876, seq(1880, 2000, 10), 2003),]
-p <- n
-p$population[1] <- n$population[1] /10*4
-p$population[15] <- n$population[15] /10*3
-o <- p %>% mutate(population = round(population, 2)) %>% 
-  mutate(cpp = round(cumsum(p$population)/(sum(p$population)), 3))
-p5 <- o$cpp[o$year == 1950]
-
-n <- MLBpops_decade[MLBpops_decade$year %in% c(1876, seq(1880, 1980, 10), 1988),]
-p <- n
-p$population[1] <- n$population[1] /10*4
-p$population[13] <- n$population[13] /10*8
-o <- p %>% mutate(population = round(population, 2)) %>% 
-  mutate(cpp = round(cumsum(p$population)/(sum(p$population)), 3))
-p6 <- o$cpp[o$year == 1950]
-
-n <- MLBpops_decade[MLBpops_decade$year %in% c(1871, seq(1880, 2000, 10), 2006),]
-p <- n
-p$population[1] <- n$population[1] /10*9
-p$population[15] <- n$population[15] /10*6
-o <- p %>% mutate(population = round(population, 2)) %>% 
-  mutate(cpp = round(cumsum(p$population)/(sum(p$population)), 3))
-p7 <- o$cpp[o$year == 1950]
-
-combined_HR <- rbind(combined_HR, 
-                c(p1,p2,p3,p4,p5,p6,p7))
-
-## MLB-eligible population range
-
-combined_HR <- rbind(combined_HR, c('1871-2023', '1871-2012', '1901-1996', '1871-1993', '1876-2003', '1876-1988', '1871-2006'))
-
-## chances of observing old era players in top 10
-
-chance_10 <- round(c(1 / (1 - pbinom(as.numeric(combined_HR[26,1])-1, 10, as.numeric(combined_HR[28,1]))), 1 / (1 - pbinom(as.numeric(combined_HR[26,2])-1, 10, as.numeric(combined_HR[28,2]))), 1 / (1 - pbinom(as.numeric(combined_HR[26,3])-1, 10, as.numeric(combined_HR[28,3]))), 1 / (1 - pbinom(as.numeric(combined_HR[26,4])-1, 10, as.numeric(combined_HR[28,4]))), 1 / (1 - pbinom(as.numeric(combined_HR[26,5])-1, 10, as.numeric(combined_HR[28,5]))), 1 / (1 - pbinom(as.numeric(combined_HR[26,6])-1, 10, as.numeric(combined_HR[28,6]))), 1 / (1 - pbinom(as.numeric(combined_HR[26,7])-1, 10, as.numeric(combined_HR[28,7])))), 2)
-
-## chances of observing old era players in top 25
-
-chance_25 <- round(c(1 / (1 - pbinom(as.numeric(combined_HR[27,1])-1, 25, as.numeric(combined_HR[28,1]))), 1 / (1 - pbinom(as.numeric(combined_HR[27,2])-1, 25, as.numeric(combined_HR[28,2]))), 1 / (1 - pbinom(as.numeric(combined_HR[27,3])-1, 25, as.numeric(combined_HR[28,3]))), 1 / (1 - pbinom(as.numeric(combined_HR[27,4])-1, 25, as.numeric(combined_HR[28,4]))), 1 / (1 - pbinom(as.numeric(combined_HR[27,5])-1, 25, as.numeric(combined_HR[28,5]))), 1 / (1 - pbinom(as.numeric(combined_HR[27,6])-1, 25, as.numeric(combined_HR[28,6]))), 1 / (1 - pbinom(as.numeric(combined_HR[26,7])-1, 25, as.numeric(combined_HR[28,7])))), 2)
-
-row_name <- data.frame(rank = c(seq(1,25), 'pre-1950 in top 10', 'pre-1950 in top 25', 'proportion before 1950', 'MLB-eligible population', 'chance in top 10', 'chance in top 10'))
-
-kable(cbind(row_name, rbind(combined_HR, sapply(chance_10, function(x) paste('1 in', x)), sapply(chance_25, function(x) paste('1 in', x))))) %>% 
+# ## pre-1950 in top 10
+# HR_peak <- sum(bar %>% select(rookie_year) %>% slice(1:10) < 1950)
+# HR_career <- sum(career_fullhouse_HR_AB %>% select(rookie_year) %>% slice(1:10) < 1950)
+# combined_HR <- rbind(combined_HR, c(HR_peak,HR_career,1,7,5,4,3))
+# 
+# ## pre-1950 in top 25
+# HR_peak <- sum(bar %>% select(rookie_year) %>% slice(1:25) < 1950)
+# HR_career <- sum(career_fullhouse_HR_AB %>% select(rookie_year) %>% slice(1:25) < 1950)
+# combined_HR <- rbind(combined_HR, c(HR_peak,HR_career,5,12,13,12,5))
+# 
+# ## proportion before 1950
+# n <- MLBpops_decade[MLBpops_decade$year %in% c(1871, seq(1880, 2020, 10), 2023),]
+# p <- n
+# p$population[1] <- n$population[1] /10*9
+# p$population[17] <- n$population[17] /10*3
+# o <- p %>% mutate(population = round(population, 2)) %>% 
+#   mutate(cpp = round(cumsum(p$population)/(sum(p$population)), 3))
+# p1 <- o$cpp[o$year == 1950]
+# 
+# n <- MLBpops_decade[MLBpops_decade$year %in% c(1871, seq(1880, 2010, 10), 2012),]
+# p <- n
+# p$population[1] <- n$population[1] /10*9
+# p$population[16] <- n$population[16] /10*2
+# o <- p %>% mutate(population = round(population, 2)) %>% 
+#   mutate(cpp = round(cumsum(p$population)/(sum(p$population)), 3))
+# p2 <- o$cpp[o$year == 1950]
+# 
+# n <- MLBpops_decade[MLBpops_decade$year %in% c(1901, seq(1910, 1990, 10), 1996),]
+# p <- n
+# p$population[1] <- n$population[1] /10*9
+# p$population[11] <- n$population[11] /10*6
+# o <- p %>% mutate(population = round(population, 2)) %>% 
+#   mutate(cpp = round(cumsum(p$population)/(sum(p$population)), 3))
+# p3 <- o$cpp[o$year == 1950]
+# 
+# n <- MLBpops_decade[MLBpops_decade$year %in% c(1871, seq(1880, 1990, 10), 1993),]
+# p <- n
+# p$population[1] <- n$population[1] /10*9
+# p$population[14] <- n$population[14] /10*3
+# o <- p %>% mutate(population = round(population, 2)) %>% 
+#   mutate(cpp = round(cumsum(p$population)/(sum(p$population)), 3))
+# p4 <- o$cpp[o$year == 1950]
+# 
+# n <- MLBpops_decade[MLBpops_decade$year %in% c(1876, seq(1880, 2000, 10), 2003),]
+# p <- n
+# p$population[1] <- n$population[1] /10*4
+# p$population[15] <- n$population[15] /10*3
+# o <- p %>% mutate(population = round(population, 2)) %>% 
+#   mutate(cpp = round(cumsum(p$population)/(sum(p$population)), 3))
+# p5 <- o$cpp[o$year == 1950]
+# 
+# n <- MLBpops_decade[MLBpops_decade$year %in% c(1876, seq(1880, 1980, 10), 1988),]
+# p <- n
+# p$population[1] <- n$population[1] /10*4
+# p$population[13] <- n$population[13] /10*8
+# o <- p %>% mutate(population = round(population, 2)) %>% 
+#   mutate(cpp = round(cumsum(p$population)/(sum(p$population)), 3))
+# p6 <- o$cpp[o$year == 1950]
+# 
+# n <- MLBpops_decade[MLBpops_decade$year %in% c(1871, seq(1880, 2000, 10), 2006),]
+# p <- n
+# p$population[1] <- n$population[1] /10*9
+# p$population[15] <- n$population[15] /10*6
+# o <- p %>% mutate(population = round(population, 2)) %>% 
+#   mutate(cpp = round(cumsum(p$population)/(sum(p$population)), 3))
+# p7 <- o$cpp[o$year == 1950]
+# 
+# combined_HR <- rbind(combined_HR, 
+#                 c(p1,p2,p3,p4,p5,p6,p7))
+# 
+# ## talent pool range
+# 
+# combined_HR <- rbind(combined_HR, c('1871-2023', '1871-2012', '1901-1996', '1871-1993', '1876-2003', '1876-1988', '1871-2006'))
+# 
+# ## chances of observing old era players in top 10
+# 
+# chance_10 <- round(c(1 / (1 - pbinom(as.numeric(combined_HR[26,1])-1, 10, as.numeric(combined_HR[28,1]))), 1 / (1 - pbinom(as.numeric(combined_HR[26,2])-1, 10, as.numeric(combined_HR[28,2]))), 1 / (1 - pbinom(as.numeric(combined_HR[26,3])-1, 10, as.numeric(combined_HR[28,3]))), 1 / (1 - pbinom(as.numeric(combined_HR[26,4])-1, 10, as.numeric(combined_HR[28,4]))), 1 / (1 - pbinom(as.numeric(combined_HR[26,5])-1, 10, as.numeric(combined_HR[28,5]))), 1 / (1 - pbinom(as.numeric(combined_HR[26,6])-1, 10, as.numeric(combined_HR[28,6]))), 1 / (1 - pbinom(as.numeric(combined_HR[26,7])-1, 10, as.numeric(combined_HR[28,7])))), 2)
+# 
+# ## chances of observing old era players in top 25
+# 
+# chance_25 <- round(c(1 / (1 - pbinom(as.numeric(combined_HR[27,1])-1, 25, as.numeric(combined_HR[28,1]))), 1 / (1 - pbinom(as.numeric(combined_HR[27,2])-1, 25, as.numeric(combined_HR[28,2]))), 1 / (1 - pbinom(as.numeric(combined_HR[27,3])-1, 25, as.numeric(combined_HR[28,3]))), 1 / (1 - pbinom(as.numeric(combined_HR[27,4])-1, 25, as.numeric(combined_HR[28,4]))), 1 / (1 - pbinom(as.numeric(combined_HR[27,5])-1, 25, as.numeric(combined_HR[28,5]))), 1 / (1 - pbinom(as.numeric(combined_HR[27,6])-1, 25, as.numeric(combined_HR[28,6]))), 1 / (1 - pbinom(as.numeric(combined_HR[26,7])-1, 25, as.numeric(combined_HR[28,7])))), 2)
+# 
+# row_name <- data.frame(rank = c(seq(1,25), 'pre-1950 in top 10', 'pre-1950 in top 25', 'proportion before 1950', 'talent pool', 'chance in top 10', 'chance in top 10'))
+# 
+# kable(cbind(row_name, rbind(combined_HR, sapply(chance_10, function(x) paste('1 in', x)), sapply(chance_25, function(x) paste('1 in', x))))) %>% 
+#   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
+# 
+row_name <- data.frame(rank = c(seq(1,25)))
+kable(cbind(row_name, combined_HR)) %>% 
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
-
 ```
-
+ 
 ## OBP rankings from different sources.
-
+ 
 ```{r echo=FALSE}
-OBP_fullhouse <- (batcar_year %>% 
+OBP_fullhouse <- (batcar_year %>%
                     filter(AB >= 5000, rookie_year <= 2012) %>%
   arrange(desc(OBP)))
 
-raw_career_OBP <- data.frame(name = c("Ted Williams", "Babe Ruth", 
-"John McGraw", "Billy Hamilton", "Lou Gehrig", 
-"Barry Bonds", "Bill Joyce", "Jud Wilson", "Rogers Hornsby", 
-"Ty Cobb", "Jimmie Foxx", "Tris Speaker", "Eddie Collins", 
-"Ferris Fain", "Dan Brouthers", "Max Bishop", "Shoeless Joe Jackson", 
-"Mickey Mantle", "Mickey Cochrane", "Frank Thomas", 
+raw_career_OBP <- data.frame(name = c("Ted Williams", "Babe Ruth",
+"John McGraw", "Billy Hamilton", "Lou Gehrig",
+"Barry Bonds", "Bill Joyce", "Jud Wilson", "Rogers Hornsby",
+"Ty Cobb", "Jimmie Foxx", "Tris Speaker", "Eddie Collins",
+"Ferris Fain", "Dan Brouthers", "Max Bishop", "Shoeless Joe Jackson",
+"Mickey Mantle", "Mickey Cochrane", "Frank Thomas",
 "Edgar Martinez", "Turkey Stearnes", "Stan Musial", "Cupid Childs", "Wade Boggs"))
 
-Schell_career_OBP <- data.frame(name = c("Ted Williams", "Babe Ruth", 
-"Rogers Hornsby", "Barry Bonds", "John McGraw", "Billy Hamilton", 
-"Topsy Hartsel", "Mel Ott", "Roy Thomas", "Mickey Mantle", 
-"Wade Boggs", "Frank Thomas", "Lou Gehrig", "Rickey Henderson", 
-"Stan Musial", "Edgar Martinez", "Ty Cobb", "Dan Brouthers", 
-"Tris Speaker", "Joe Cunningham", "George Gore", "Eddie Collins", 
+Schell_career_OBP <- data.frame(name = c("Ted Williams", "Babe Ruth",
+"Rogers Hornsby", "Barry Bonds", "John McGraw", "Billy Hamilton",
+"Topsy Hartsel", "Mel Ott", "Roy Thomas", "Mickey Mantle",
+"Wade Boggs", "Frank Thomas", "Lou Gehrig", "Rickey Henderson",
+"Stan Musial", "Edgar Martinez", "Ty Cobb", "Dan Brouthers",
+"Tris Speaker", "Joe Cunningham", "George Gore", "Eddie Collins",
 "Ross Youngs", "Mike Hargrove", "Jeff Bagwell"))
 
 combined_OBP <- cbind(OBP_fullhouse$name[1:25], Schell_career_OBP, raw_career_OBP)
 
 colnames(combined_OBP) <- c('Career Full House', 'Schell Method', 'Raw Career')
 
-## pre-1950 in top 10
-OBP_career <- sum(OBP_fullhouse %>% select(rookie_year) %>% slice(1:10) < 1950)
-combined_OBP <- rbind(combined_OBP, c(OBP_career,8,8))
-
-## pre-1950 in top 25
-OBP_career <- sum(OBP_fullhouse %>% select(rookie_year) %>% slice(1:25) < 1950)
-combined_OBP <- rbind(combined_OBP, c(OBP_career,16,19))
-
-## proportion before 1950
-n <- MLBpops_decade[MLBpops_decade$year %in% c(1871, seq(1880, 2010, 10), 2012),]
-p <- n
-p$population[1] <- n$population[1] /10*9
-p$population[16] <- n$population[16] /10*2
-o <- p %>% mutate(population = round(population, 2)) %>% 
-  mutate(cpp = round(cumsum(p$population)/(sum(p$population)), 3))
-p1 <- o$cpp[o$year == 1950]
-
-n <- MLBpops_decade[MLBpops_decade$year %in% c(1876, seq(1880, 1990, 10), 1993),]
-p <- n
-p$population[1] <- n$population[1] /10*4
-p$population[14] <- n$population[14] /10*3
-o <- p %>% mutate(population = round(population, 2)) %>% 
-  mutate(cpp = round(cumsum(p$population)/(sum(p$population)), 3))
-p2 <- o$cpp[o$year == 1950]
-
-n <- MLBpops_decade[MLBpops_decade$year %in% c(1871, seq(1880, 2010, 10), 2012),]
-p <- n
-p$population[1] <- n$population[1] /10*9
-p$population[16] <- n$population[16] /10*2
-o <- p %>% mutate(population = round(population, 2)) %>% 
-  mutate(cpp = round(cumsum(p$population)/(sum(p$population)), 3))
-p3 <- o$cpp[o$year == 1950]
-
-combined_OBP <- rbind(combined_OBP, c(0.250, 0.354, 0.250))
-
-## MLB-eligible population range
-
-combined_OBP <- rbind(combined_OBP, c('1871-2012', '1876-1993', '1871-2012'))
-
-## chances of observing old era batters in top 10
-
-chance_10 <- round(c(1 / (1 - pbinom(as.numeric(combined_OBP[26,1])-1, 10, as.numeric(combined_OBP[28,1]))), 1 / (1 - pbinom(as.numeric(combined_OBP[26,2])-1, 10, as.numeric(combined_OBP[28,2]))), 1 / (1 - pbinom(as.numeric(combined_OBP[26,3])-1, 10, as.numeric(combined_OBP[28,3])))), 2)
-
-## chances of observing old era batters in top 25
-
-chance_25 <- round(c(1 / (1 - pbinom(as.numeric(combined_OBP[27,1])-1, 25, as.numeric(combined_OBP[28,1]))), 1 / (1 - pbinom(as.numeric(combined_OBP[27,2])-1, 25, as.numeric(combined_OBP[28,2]))), 1 / (1 - pbinom(as.numeric(combined_OBP[27,3])-1, 25, as.numeric(combined_OBP[28,3])))), 2)
-
-row_name <- data.frame(rank = c(seq(1,25), 'pre-1950 in top 10', 'pre-1950 in top 25', 'proportion before 1950', 'MLB-eligible population', 'chance in top 10', 'chance in top 10'))
-
-kable(cbind(row_name, rbind(combined_OBP, sapply(chance_10, function(x) paste('1 in', x)), sapply(chance_25, function(x) paste('1 in', x))))) %>% 
+# ## pre-1950 in top 10
+# OBP_career <- sum(OBP_fullhouse %>% select(rookie_year) %>% slice(1:10) < 1950)
+# combined_OBP <- rbind(combined_OBP, c(OBP_career,8,8))
+# 
+# ## pre-1950 in top 25
+# OBP_career <- sum(OBP_fullhouse %>% select(rookie_year) %>% slice(1:25) < 1950)
+# combined_OBP <- rbind(combined_OBP, c(OBP_career,16,19))
+# 
+# ## proportion before 1950
+# n <- MLBpops_decade[MLBpops_decade$year %in% c(1871, seq(1880, 2010, 10), 2012),]
+# p <- n
+# p$population[1] <- n$population[1] /10*9
+# p$population[16] <- n$population[16] /10*2
+# o <- p %>% mutate(population = round(population, 2)) %>% 
+#   mutate(cpp = round(cumsum(p$population)/(sum(p$population)), 3))
+# p1 <- o$cpp[o$year == 1950]
+# 
+# n <- MLBpops_decade[MLBpops_decade$year %in% c(1876, seq(1880, 1990, 10), 1993),]
+# p <- n
+# p$population[1] <- n$population[1] /10*4
+# p$population[14] <- n$population[14] /10*3
+# o <- p %>% mutate(population = round(population, 2)) %>% 
+#   mutate(cpp = round(cumsum(p$population)/(sum(p$population)), 3))
+# p2 <- o$cpp[o$year == 1950]
+# 
+# n <- MLBpops_decade[MLBpops_decade$year %in% c(1871, seq(1880, 2010, 10), 2012),]
+# p <- n
+# p$population[1] <- n$population[1] /10*9
+# p$population[16] <- n$population[16] /10*2
+# o <- p %>% mutate(population = round(population, 2)) %>% 
+#   mutate(cpp = round(cumsum(p$population)/(sum(p$population)), 3))
+# p3 <- o$cpp[o$year == 1950]
+# 
+# combined_OBP <- rbind(combined_OBP, c(0.250, 0.354, 0.250))
+# 
+# ## talent pool range
+# 
+# combined_OBP <- rbind(combined_OBP, c('1871-2012', '1876-1993', '1871-2012'))
+# 
+# ## chances of observing old era batters in top 10
+# 
+# chance_10 <- round(c(1 / (1 - pbinom(as.numeric(combined_OBP[26,1])-1, 10, as.numeric(combined_OBP[28,1]))), 1 / (1 - pbinom(as.numeric(combined_OBP[26,2])-1, 10, as.numeric(combined_OBP[28,2]))), 1 / (1 - pbinom(as.numeric(combined_OBP[26,3])-1, 10, as.numeric(combined_OBP[28,3])))), 2)
+# 
+# ## chances of observing old era batters in top 25
+# 
+# chance_25 <- round(c(1 / (1 - pbinom(as.numeric(combined_OBP[27,1])-1, 25, as.numeric(combined_OBP[28,1]))), 1 / (1 - pbinom(as.numeric(combined_OBP[27,2])-1, 25, as.numeric(combined_OBP[28,2]))), 1 / (1 - pbinom(as.numeric(combined_OBP[27,3])-1, 25, as.numeric(combined_OBP[28,3])))), 2)
+# 
+# row_name <- data.frame(rank = c(seq(1,25), 'pre-1950 in top 10', 'pre-1950 in top 25', 'proportion before 1950', 'talent pool', 'chance in top 10', 'chance in top 10'))
+# 
+# kable(cbind(row_name, rbind(combined_OBP, sapply(chance_10, function(x) paste('1 in', x)), sapply(chance_25, function(x) paste('1 in', x))))) %>% 
+#   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
+row_name <- data.frame(rank = c(seq(1,25)))
+kable(cbind(row_name, combined_OBP)) %>% 
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
-
 ```
 
 
@@ -2422,7 +2438,7 @@ kable(foo) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 ```
 
-## Figure 1: Histogram of the p-values from Shapiro-Wilk test of normality on the BA distribution in each season in the Supplementary materials.
+## Histogram of the p-values from Shapiro-Wilk test of normality on the BA distribution in each season in the Supplementary materials.
 
 ```{r echo=FALSE}
 ggplot(normality, aes(x=p_value)) + geom_histogram(binwidth=0.02, aes(y=..density..)) +
@@ -2494,7 +2510,7 @@ p3 <- o$cpp[o$year == 1950]
 
 BA_OBP_HR <- rbind(BA_OBP_HR, c(p1, '', p2, '', p3, ''))
 
-## MLB-eligible population range
+## talent pool range
 
 BA_OBP_HR <- rbind(BA_OBP_HR, c('1871-2012','', '1871-2012','', '1871-2012',''))
 
@@ -2506,7 +2522,7 @@ chance_10 <- c(paste('1 in', round(1 / (1 - pbinom(as.numeric(BA_OBP_HR[26,1])-1
 
 chance_25 <- c(paste('1 in', round(1 / (1 - pbinom(as.numeric(BA_OBP_HR[27,1])-1, 25, as.numeric(BA_OBP_HR[28,1]))), 2)), '', paste('1 in', round(1 / (1 - pbinom(as.numeric(BA_OBP_HR[27,3])-1, 25, as.numeric(BA_OBP_HR[28,3]))), 2)), '', paste('1 in', round(1 / (1 - pbinom(as.numeric(BA_OBP_HR[27,5])-1, 25, as.numeric(BA_OBP_HR[28,5]))), 2)),'')
 
-row_name <- data.frame(rank = c(seq(1,25), 'pre-1950 in top 10', 'pre-1950 in top 25', 'proportion before 1950', 'MLB-eligible population', 'chance in top 10', 'chance in top 10'))
+row_name <- data.frame(rank = c(seq(1,25), 'pre-1950 in top 10', 'pre-1950 in top 25', 'proportion before 1950', 'talent pool', 'chance in top 10', 'chance in top 10'))
 
 knitr::kable(cbind(row_name, rbind(BA_OBP_HR, chance_10, chance_25))) %>% 
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
@@ -2615,7 +2631,7 @@ p3 <- o$cpp[o$year == 1950]
 
 IP_ERA_K <- rbind(IP_ERA_K, c(p1, '', p2, '', p3, ''))
 
-## MLB-eligible population range
+## talent pool range
 
 IP_ERA_K <- rbind(IP_ERA_K, c('1871-2006','', '1871-2012','', '1871-2006',''))
 
@@ -2627,7 +2643,7 @@ chance_10 <- c(paste('1 in', round(1 / (1 - pbinom(as.numeric(IP_ERA_K[26,1])-1,
 
 chance_25 <- c(paste('1 in', round(1 / (1 - pbinom(as.numeric(IP_ERA_K[27,1])-1, 25, as.numeric(IP_ERA_K[28,1]))), 2)), '', paste('1 in', round(1 / (1 - pbinom(as.numeric(IP_ERA_K[27,3])-1, 25, as.numeric(IP_ERA_K[28,3]))), 2)), '', paste('1 in', round(1 / (1 - pbinom(as.numeric(IP_ERA_K[27,5])-1, 25, as.numeric(IP_ERA_K[28,5]))), 2)),'')
 
-row_name <- data.frame(rank = c(seq(1,25), 'pre-1950 in top 10', 'pre-1950 in top 25', 'proportion before 1950', 'MLB-eligible population', 'chance in top 10', 'chance in top 10'))
+row_name <- data.frame(rank = c(seq(1,25), 'pre-1950 in top 10', 'pre-1950 in top 25', 'proportion before 1950', 'talent pool', 'chance in top 10', 'chance in top 10'))
 
 kable(cbind(row_name, rbind(IP_ERA_K, chance_10, chance_25))) %>% 
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
@@ -2880,7 +2896,7 @@ ggplot(m_ebWAR[1:1000,], aes(x=rookie_year)) + geom_histogram(binwidth=2, aes(y=
 
 The year effect for bWAR from the talent perspective and the era-adjusted bWAR perspective will be covered in this section. 
 
-The two figures below show that the bWAR and fWAR talent of the replacement-level batters from 1871 to 2023 The line in the plot is the smoothed line after apply natural cubic spline method. The changing pattern is the similar for the talent of the replacement-level batters and MLB-eligible population. The seasons that deviate from the smoothed line are those associated with strikes and World War II, such as 1943 - 1946, 1981, 1994, 1995 and 2020 seasons. 
+The two figures below show that the bWAR and fWAR talent of the replacement-level batters from 1871 to 2023 The line in the plot is the smoothed line after apply natural cubic spline method. The changing pattern is the similar for the talent of the replacement-level batters and talent pool. The seasons that deviate from the smoothed line are those associated with strikes and World War II, such as 1943 - 1946, 1981, 1994, 1995 and 2020 seasons. 
 
 ```{r echo=FALSE}
 spline_d <- batters_talent_bWAR %>% filter(full_time == 'Y') %>% group_by(yearID) %>% 
@@ -3067,7 +3083,7 @@ p +  geom_line(aes(x = ref_year, y = nn_0_bWAR)) + labs(x = 'year', y = 'era-adj
 
 ```
 
-The figure above shows the era-adjusted bWAR values over time corresponding to a hypothetical batter with 0 bWAR in 2023 using the Full House Model. The fall in the mid-2000s corresponds to increase of MLB-eligible population. Despite the sharp decline in era-adjusted bWAR values in 1981 season, it is untrue that the 1981 batters with 0 bWAR would perform better than the 2023 batters. This is because the 1981 season was brief and a large number of batters underperformed replacement-level players. The problem of the sharp decline in era-adjusted bWAR values in the 1981 season is resolved when we look at the era-adjusted bWAR and era-adjusted bWAR per game of the hypothetical hitters from 2023 with 2 bWAR. 
+The figure above shows the era-adjusted bWAR values over time corresponding to a hypothetical batter with 0 bWAR in 2023 using the Full House Model. The fall in the mid-2000s corresponds to increase of talent pool. Despite the sharp decline in era-adjusted bWAR values in 1981 season, it is untrue that the 1981 batters with 0 bWAR would perform better than the 2023 batters. This is because the 1981 season was brief and a large number of batters underperformed replacement-level players. The problem of the sharp decline in era-adjusted bWAR values in the 1981 season is resolved when we look at the era-adjusted bWAR and era-adjusted bWAR per game of the hypothetical hitters from 2023 with 2 bWAR. 
 
 The two figures below shows the era-adjusted bWAR and era-adjusted bWAR per game of the hypothetical hitters from 2023 with 2 bWAR. 
 
@@ -3292,7 +3308,7 @@ p +  geom_line(aes(x = ref_year, y = nn_0_fWAR)) + labs(x = 'year', y = 'era-adj
 
 ```
 
-The figure above shows the era-adjusted fWAR values over time corresponding to a hypothetical batter with 0 fWAR in 2023 using the Full House Model. The fall in the mid-2000s corresponds to increase of MLB-eligible population. The problem of the sharp decline in era-adjusted fWAR values in the 1981 season can also be resolved when we look at the era-adjusted fWAR and era-adjusted fWAR per game of the hypothetical hitters from 2023 with 2 fWAR. 
+The figure above shows the era-adjusted fWAR values over time corresponding to a hypothetical batter with 0 fWAR in 2023 using the Full House Model. The fall in the mid-2000s corresponds to increase of talent pool. The problem of the sharp decline in era-adjusted fWAR values in the 1981 season can also be resolved when we look at the era-adjusted fWAR and era-adjusted fWAR per game of the hypothetical hitters from 2023 with 2 fWAR. 
 
 The two figures below show he era-adjusted fWAR and era-adjusted fWAR per game of the hypothetical hitters from 2023 with 2 fWAR. 
 
@@ -5253,9 +5269,9 @@ knitr::kable(data.frame(name = c('Ty Cobb', 'Tony Gwynn'),
 
 ```
 
-## MLB-eligible population Calculation
+## talent pool Calculation
 
-Based on the MLB-eligible population computed from the [supplementary materials](./MLBeligiblepop.html), we are able to obtain the proportion of the MLB-eligible population before 1950 in different season spans. For example, we would like to calculate the proportion of the MLB-eligible population before 1950 from 1871 to 2006. Given the MLB-eligible population are evenly distribution from the age 20 to 29, the cumulative MLB-eligible males aged 20 to 29 from 1871 to 1879 is equal to 90% of the MLB-eligible population in 1871. Similarly, the cumulative MLB-eligible males aged 20 to 29 from 2000 to 2006 is equal to 60% of the MLB-eligible population in 2006. The code below shows how to compute the proportion of the MLB-eligible population before 1950 from 1871 to 2006.
+Based on the talent pool computed from the [supplementary materials](./MLBeligiblepop.html), we are able to obtain the proportion of the talent pool before 1950 in different season spans. For example, we would like to calculate the proportion of the talent pool before 1950 from 1871 to 2006. Given the talent pool are evenly distribution from the age 20 to 29, the cumulative MLB-eligible males aged 20 to 29 from 1871 to 1879 is equal to 90% of the talent pool in 1871. Similarly, the cumulative MLB-eligible males aged 20 to 29 from 2000 to 2006 is equal to 60% of the talent pool in 2006. The code below shows how to compute the proportion of the talent pool before 1950 from 1871 to 2006.
 
 ```{r echo=TRUE}
 MLBpops <- bat_dat %>% group_by(yearID) %>% summarise(pops = unique(pops)) %>% group_by(yearID) %>%
@@ -5263,7 +5279,7 @@ MLBpops <- bat_dat %>% group_by(yearID) %>% summarise(pops = unique(pops)) %>% g
 ```
 
 ```{r echo=TRUE}
-# MLBpops contains the MLB-eligible population from 1871 to 2006
+# MLBpops contains the talent pool from 1871 to 2006
 n <- MLBpops[MLBpops$yearID %in% c(1871, seq(1880, 2000, 10), 2006),]
 p <- n
 p$population[1] <- n$population[1] /10*9
@@ -7198,7 +7214,7 @@ kable(rm_efJAWS) %>%
 
 ### Batting Average
 
-We will test four factors in our Full House Model and use batting average to illustrate it. These four factors are park-factor effect, population change, component distribution, and season size effect. The table shows the value of the era-adjusted BA of Tony Gwynn in the 1997 season minus the era-adjusted BA of Ty Cobb in the 1911 season under different configurations. The PF column indicates whether we apply the park-factor adjustment to the BA. The YES indicates we apply park-factor adjustment, and NO indicates we did not. The pops column indicates the population changes we apply to the MLB-eligible population. The 0.5_favor shows we consider 50\% favorite sport, which is the MLB eligible population we use; The 0.75_favor shows we consider 75\% favorite sport; The 1_favor shows we consider 100\% favorite; The constant shows we assume the MLB eligible population did not change over time and we set it to 1 million; The erosion shows we consider minor league erosion. The details about the how we estimate the MLB eligible population can be found in the [tech report](https://htmlpreview.github.io/?https://github.com/ecklab/era-adjustment-app-supplement/blob/main/writeups/MLBeligiblepop.html). The para column indicates we use parametric distribution or non-parametric distribution to measure the BA in each season. The para indicates we use parametric distribution to measure BA and nonpara indicates we use non-parametric distribution to measure BA. The league column indicates we consider two different league sizes as the number of components in each season. The Historical shows we use historical league size as the number of components in each season. The Fixed shows that we compute the maximum number of components in every season and consider this value as the fixed number of components each season. The diff column shows the value of the era-adjusted BA of Tony Gwynn in the 1997 season minus the BA of Ty Cobb in the 1911 season
+We will test four factors in our Full House Model and use batting average to illustrate it. These four factors are park-factor effect, population change, component distribution, and season size effect. The table shows the value of the era-adjusted BA of Tony Gwynn in the 1997 season minus the era-adjusted BA of Ty Cobb in the 1911 season under different configurations. The PF column indicates whether we apply the park-factor adjustment to the BA. The YES indicates we apply park-factor adjustment, and NO indicates we did not. The pops column indicates the population changes we apply to the talent pool. The 0.5_favor shows we consider 50\% favorite sport, which is the talent pool we use; The 0.75_favor shows we consider 75\% favorite sport; The 1_favor shows we consider 100\% favorite; The constant shows we assume the talent pool did not change over time and we set it to 1 million; The erosion shows we consider minor league erosion. The details about the how we estimate the talent pool can be found in the [tech report](https://htmlpreview.github.io/?https://github.com/ecklab/era-adjustment-app-supplement/blob/main/writeups/MLBeligiblepop.html). The para column indicates we use parametric distribution or non-parametric distribution to measure the BA in each season. The para indicates we use parametric distribution to measure BA and nonpara indicates we use non-parametric distribution to measure BA. The league column indicates we consider two different league sizes as the number of components in each season. The Historical shows we use historical league size as the number of components in each season. The Fixed shows that we compute the maximum number of components in every season and consider this value as the fixed number of components each season. The diff column shows the value of the era-adjusted BA of Tony Gwynn in the 1997 season minus the BA of Ty Cobb in the 1911 season
 
 ```{r cache=TRUE, echo=FALSE}
 ## park-factor adjustment
@@ -9680,7 +9696,7 @@ kable(season_diff) %>%
 
 ### bWAR
 
-We also use bWAR to test the effect of population change, season size and trimming method in our Full House Model. The table shows the value of the career bWAR of Willie Mays minus the career bWAR of Babe Ruth under different configurations before and after applying the trimming method. The pops column indicates the population changes we apply to the MLB-eligible population. The 0.5_favor shows we consider 50\% favorite sport, which is the MLB eligible population we use; The 0.75_favor shows we consider 75\% favorite sport; The 1_favor shows we consider 100\% favorite; The constant shows we assume the MLB eligible population did not change over time and we set it to 1 million; The erosion shows we consider minor league erosion. The details about the how we estimate the MLB eligible population can be found in the [tech report](https://htmlpreview.github.io/?https://github.com/ecklab/era-adjustment-app-supplement/blob/main/writeups/MLBeligiblepop.html). The league column indicates we consider two different league sizes as the number of components in each season. The historical shows we use historical league size as the number of components in each season. The fixed shows that we compute the maximum number of components in every season and consider this value as the fixed number of components each season. The diff_after indicates the value of the career bWAR of Willie Mays minus the career bWAR of Babe Ruth under different configurations after applying the trimming method. The diff_before indicates the value of the career bWAR of Willie Mays minus the career bWAR of Babe Ruth under different configurations before applying the trimming method.
+We also use bWAR to test the effect of population change, season size and trimming method in our Full House Model. The table shows the value of the career bWAR of Willie Mays minus the career bWAR of Babe Ruth under different configurations before and after applying the trimming method. The pops column indicates the population changes we apply to the talent pool. The 0.5_favor shows we consider 50\% favorite sport, which is the talent pool we use; The 0.75_favor shows we consider 75\% favorite sport; The 1_favor shows we consider 100\% favorite; The constant shows we assume the talent pool did not change over time and we set it to 1 million; The erosion shows we consider minor league erosion. The details about the how we estimate the talent pool can be found in the [tech report](https://htmlpreview.github.io/?https://github.com/ecklab/era-adjustment-app-supplement/blob/main/writeups/MLBeligiblepop.html). The league column indicates we consider two different league sizes as the number of components in each season. The historical shows we use historical league size as the number of components in each season. The fixed shows that we compute the maximum number of components in every season and consider this value as the fixed number of components each season. The diff_after indicates the value of the career bWAR of Willie Mays minus the career bWAR of Babe Ruth under different configurations after applying the trimming method. The diff_before indicates the value of the career bWAR of Willie Mays minus the career bWAR of Babe Ruth under different configurations before applying the trimming method.
 
 ```{r cache=TRUE, echo=FALSE}
 load('bat_dat.RData')
@@ -23300,7 +23316,7 @@ kable(cbind(dat_WAR_0.5 %>% arrange(desc(eJAWS)) %>%
 
 ## Multiverse Analysis: Home Run
 
-We will test three factors in our Full House Model and use home run to illustrate it. These four factors are park-factor effect, population change, and season size effect. The table shows the value of the era-adjusted HR of Barry Bonds in the 2001 season minus the era-adjusted HR of Babe Ruth in the 1920 season under different configurations. The PF column indicates whether we apply the park-factor adjustment to the HR. The YES indicates we apply park-factor adjustment, and NO indicates we did not. The pops column indicates the population changes we apply to the MLB-eligible population. The 0.5_favor shows we consider 50\% favorite sport, which is the MLB eligible population we use; The 0.75_favor shows we consider 75\% favorite sport; The 1_favor shows we consider 100\% favorite; The constant shows we assume the MLB eligible population did not change over time and we set it to 1 million; The erosion shows we consider minor league erosion. The details about the how we estimate the MLB eligible population can be found in the [tech report](https://htmlpreview.github.io/?https://github.com/ecklab/era-adjustment-app-supplement/blob/main/writeups/MLBeligiblepop.html). The league column indicates we consider two different league sizes as the number of components in each season. The Historical shows we use historical league size as the number of components in each season. The Fixed shows that we compute the maximum number of components in every season and consider this value as the fixed number of components each season. The diff column shows the value of the era-adjusted HR of Barry Bonds in the 2001 season minus the era-adjusted HR of Babe Ruth in the 1920 season.
+We will test three factors in our Full House Model and use home run to illustrate it. These four factors are park-factor effect, population change, and season size effect. The table shows the value of the era-adjusted HR of Barry Bonds in the 2001 season minus the era-adjusted HR of Babe Ruth in the 1920 season under different configurations. The PF column indicates whether we apply the park-factor adjustment to the HR. The YES indicates we apply park-factor adjustment, and NO indicates we did not. The pops column indicates the population changes we apply to the talent pool. The 0.5_favor shows we consider 50\% favorite sport, which is the talent pool we use; The 0.75_favor shows we consider 75\% favorite sport; The 1_favor shows we consider 100\% favorite; The constant shows we assume the talent pool did not change over time and we set it to 1 million; The erosion shows we consider minor league erosion. The details about the how we estimate the talent pool can be found in the [tech report](https://htmlpreview.github.io/?https://github.com/ecklab/era-adjustment-app-supplement/blob/main/writeups/MLBeligiblepop.html). The league column indicates we consider two different league sizes as the number of components in each season. The Historical shows we use historical league size as the number of components in each season. The Fixed shows that we compute the maximum number of components in every season and consider this value as the fixed number of components each season. The diff column shows the value of the era-adjusted HR of Barry Bonds in the 2001 season minus the era-adjusted HR of Babe Ruth in the 1920 season.
 
 ```{r cache=TRUE, echo=FALSE}
 ## park-factor adjustment
@@ -26213,7 +26229,7 @@ kable(cbind(rank = seq(1,25), dist_combined)) %>%
 ```{r echo=FALSE}
 mapping_envir <- data.frame(talent_new = talent_new, comp_new = comp_new)
 ggplot(data = no_strike, aes(x = WAR_talent, y = comp)) + geom_point() + 
-  geom_point(data = mapping_envir, aes(x = talent_new, y = comp_new), color = 'red') +
+  geom_line(data = mapping_envir, aes(x = talent_new, y = comp_new), color = 'red', linewidth = 2) +
   labs(x = 'bWAR talent', y = 'bWAR per game') +
   scale_x_continuous(trans='log')
 ```
@@ -27407,3 +27423,30 @@ kable(cbind(normal_comparsion)) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 
 ```
+
+```{r echo=FALSE}
+load('bat_dat.RData')
+batters <- bat_dat
+batters <- merge(batters, cutoff, by = 'yearID')
+batters <- batters %>% select(playerID, yearID, name, AB, PA, H, thres) %>%
+  mutate(comp = ifelse(AB != 0, H / AB, 0), full_time = ifelse(PA >= thres, 'Y', 'N'))
+batters_schell <- do.call(rbind, mclapply(years, mc.cores = ncores, FUN = function(xx){
+    int<- batters %>% filter(yearID == xx)
+    lg_avg <- sum(int$H)/sum(int$AB)
+    int %>% mutate(comp = (H + lg_avg * 25)/(AB + 25))
+  }))
+normality <- do.call(rbind, mclapply(years, mc.cores = ncores, FUN = function(xx){
+  m <- batters_schell %>% filter(yearID == xx, full_time == 'Y')
+  return(data.frame(yearID = xx, p_value = shapiro.test(m$comp)$p.value))
+}))
+
+```
+
+## Figure 1: Histogram of the p-values from Shapiro-Wilk test of normality on the BA distribution in each season in the Supplementary materials.
+
+```{r echo=FALSE}
+ggplot(normality, aes(x=p_value)) + geom_histogram(binwidth=0.1, aes(y=..density..)) +
+ geom_density() 
+```
+
+
