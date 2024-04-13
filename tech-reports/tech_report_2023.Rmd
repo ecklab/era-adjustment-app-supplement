@@ -25237,7 +25237,7 @@ kable(rm_WAR) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 ```
 
-## Figure 5: Estimated WAR of a 2-WAR player in 2023 in the manuscript
+## Figure 5: Estimated WAR of a 2-WAR player in 2023 throughout time in the manuscript
 
 ```{r cache=TRUE, echo=FALSE}
 load("bat_dat.RData")
@@ -25485,7 +25485,7 @@ ggplot(data = WAR_data) +
 
 ```
 
-## Figure 6: Tail probability for outlying Ruth and Bonds seasons in the manuscript
+## Figure 6: Tail probability modeling for outlying Ruth and Bonds seasons in the manuscript
 
 ```{r cache=TRUE, echo=FALSE}
  batters_HR <- bat_dat %>% 
