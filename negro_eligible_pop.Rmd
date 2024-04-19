@@ -1,0 +1,211 @@
+---
+title: "Negro league eligible population"
+author: "Shen Yan, Adrian Burgos Jr., Christopher Kinson, and Daniel J. Eck"
+date: ""
+output: html_document
+urlcolor: blue
+bibliography: eligible_pop.bib
+header-includes: 
+ - \usepackage{amsthm}
+ - \usepackage{amsmath}
+ - \usepackage{amsfonts}
+ - \usepackage{amscd}
+ - \usepackage{amssymb}
+ - \usepackage[sectionbib]{natbib}
+ - \usepackage{url}
+ - \usepackage{graphicx,times}
+---
+
+```{r setup, include=FALSE, message=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE, cache.lazy = FALSE)
+```
+
+In this document we estimate the Negro League eligible population factoring in the changing levels of interest in the game. 
+
+Negro League Baseball started as a game played by people largely from the South region of the United States of America. Our construction of the Negro League eligible population will be pegged to the population of age 20-29 males from the South region of the United States of America from 1920 to 1948. Simply stated, the Negro League eligible population will be 
+
+$$
+  \frac{\text{South region population} \times \text{percent of age 20 to 29 negro males}}{\text{proportion of negro league players from South region}} \times \text{adjustment}.
+$$
+
+In our analysis, the states that comprise the South region are: 
+
+- Alabama
+- Arkansas
+- Delaware
+- District of Columbia
+- Florida
+- Georgia
+- Kentucky
+- Louisiana
+- Maryland
+- Mississippi
+- North Carolina
+- Oklahoma
+- South Carolina
+- Tennessee
+- Texas
+- Virginia
+- West Virginia
+
+We load in the necessary software packages used in this analysis.
+
+```{r, warning=FALSE,message=FALSE}
+library(Lahman)
+library(tidyverse)
+library(ggplot2)
+library(splines)
+```
+
+## MLB Demographics 
+
+\vspace{12pt}
+We load in the Batting and Pitching data sets scrapped from the [Baseball-Reference](https://www.baseball-reference.com/) and isolate the birth state and birth country for every Negro League player in history. Missing entries are discarded. 
+\vspace{12pt}
+
+```{r , warning=FALSE,message=FALSE}
+# Negro League Demographics
+
+negro_info <- read.csv("negro_info.csv")
+negro_bat_all <- read.csv("bat_negro_all.csv")
+negro_pit_all <- read.csv("pit_negro_all.csv")
+
+foo_bat <- negro_bat_all %>% dplyr::select(playerID, yearID) %>% 
+  left_join(negro_info %>% dplyr::select(playerID, state, country))
+foo_pit <- negro_pit_all %>% dplyr::select(playerID, yearID) %>% 
+  left_join(negro_info %>% dplyr::select(playerID, state, country))
+
+foo_tot <- rbind(foo_bat, foo_pit) %>% distinct()
+
+## throw out missing entries
+foo_tot <- foo_tot[!is.na(foo_tot$country), ]
+foo_tot <- foo_tot[foo_tot$playerID != 'binghbi01', ]
+
+bar_tot <- foo_tot %>% group_by(yearID) %>% 
+  summarise(perc_foreign = sum(ifelse(country != "us",1,0))/n() )
+
+ggplot(bar_tot, aes(x = yearID, y = perc_foreign)) + 
+  geom_point()
+```
+
+## proportion of negro league players from South region
+
+\vspace{12pt}
+We add a regions variable which will allow us to plot the proportion of Negro League players from each region over time (0 will indicate an international player).
+\vspace{12pt}
+
+```{r}
+foo_tot$state[is.na(foo_tot$state)] <- 'none'
+
+NMLB <- foo_tot %>% group_by(yearID) %>% 
+  summarise(N = n())
+
+state_perc <- foo_tot %>% 
+  group_by(yearID, country, state) %>% 
+  summarise(Nstate = n()) %>%
+  distinct() %>%
+  left_join(NMLB) %>% 
+  mutate(state_perc = Nstate/N) %>% 
+  mutate(region = ifelse(state %in% c("CT", "MA", "DE", "ME", "NH", 
+                                      "NJ", "NY", "PA", "VT", "RI"), "NE", "0"), 
+         region = ifelse(state %in% c("IL", "IN", "MI", "OH", "WI", 
+                                      "IA", "KS", "MN", "MO", "NE", "ND", "SD"), 
+                         "MW", region), 
+         region = ifelse(state %in% c("WA", "MT", "ID", "WY", "OR", 
+                                      "CA", "NV", "UT", "CO", "AZ", 
+                                      "NM"), "West", region), 
+         region = ifelse(country == "us" & region == "0", "South", region))
+
+region_perc <- state_perc %>% group_by(yearID, region) %>% 
+  summarise(region_perc = sum(state_perc))
+```
+
+\vspace{12pt}
+We now plot the proportion of Negro League players from each region. From this we see that Negro League baseball was primarily a southern game from 1920 to 1948. 
+
+\vspace{12pt}
+
+```{r}
+## By region (0 is international)
+ggplot(region_perc, aes(x = yearID, y = region_perc)) + 
+  geom_line() + 
+  facet_wrap(~region) + 
+  ylab("region proportion")
+
+```
+
+We now estimate the Negro League eligible population from three main sources:  [UN](https://population.un.org/wpp/Download/Standard/Population/) and
+[US Census](https://www.census.gov/). The eligible population will be age 20-29 males as in \cite{eck2020challenging}. These sources record population tallies every 10 years. 
+
+## South region population
+
+```{r}
+#https://www.census.gov/data/tables/time-series/dec/popchange-data-text.html
+mat <- cbind(seq(1950,1920,by=-10),
+             matrix(c(39477986, 35976777, 34427091, 29662053, 
+                      44460762, 40143332, 38594100, 34019792, 
+                      47197088, 41665901,	37857633, 33125803,
+                      20189962, 14379119, 12323836, 9213920), ncol = 4))
+df <- as.data.frame(mat)
+colnames(df) <- c("year","NE","MW","South","W")
+df$total <- rowSums(df[, 2:5])
+```
+
+## percent of age 20 to 29 negro males
+
+```{r}
+## 1920
+## https://www2.census.gov/library/publications/decennial/1920/volume-2/41084484v2ch03.pdf 
+## page 14
+negro1920 = 487169 + 424352
+
+## 1930
+## https://www2.census.gov/library/publications/decennial/1930/population-volume-2/16440598v2ch11.pdf
+## page 18
+negro1930 = 553622+500520
+
+## 1940
+## https://www2.census.gov/library/publications/decennial/1930/population-volume-2/16440598v2ch11.pdf
+## page 9
+negro1940 = 120615+117716+115437+111106+113876+118848+108433+107656+116749+106953
+
+## 1950
+## https://www2.census.gov/library/publications/decennial/1930/population-volume-2/16440598v2ch11.pdf
+## page 1
+negro1950 = 603511+622371
+
+```
+
+\vspace{12pt}
+We now estimate the Negro League eligible population.
+\vspace{12pt}
+
+## Negro league eligible population
+
+```{r}
+df$eligible = c(negro1950, negro1940, negro1930, negro1920)
+df_pop <- df %>% mutate(pop = South * eligible / total) 
+df_pop_long <- data.frame(yearID = 1920:1950, 
+                          pop = approx(df_pop$year, df_pop$pop, xout = 1920:1950)$y) %>% 
+  filter(yearID <= 1948)
+region_perc_pop <- region_perc %>% filter(region == 'South') %>% left_join(df_pop_long) %>%
+  mutate(eligible_pop = round(pop / region_perc))
+
+ggplot(region_perc_pop, aes(x = yearID, y = eligible_pop)) + 
+  geom_line()
+```
+
+```{r echo=FALSE}
+df$eligible = c(negro1950, negro1940, negro1930, negro1920)
+df_pop <- df %>% mutate(pop = NE * eligible / total) 
+df_pop_long <- data.frame(yearID = 1920:1950, 
+                          pop = approx(df_pop$year, df_pop$pop, xout = 1920:1950)$y) %>% 
+  filter(yearID <= 1948)
+region_perc_pop <- region_perc %>% filter(region == 'NE') %>% left_join(df_pop_long) %>%
+  mutate(eligible_pop = pop / region_perc)
+
+#ggplot(region_perc_pop, aes(x = yearID, y = eligible_pop)) + 
+#  geom_line()
+```
+
+
