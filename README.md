@@ -1,7 +1,7 @@
 
 # Supplemental materials for our era-adjusted baseball statistics [website](https://eckeraadjustment.web.illinois.edu/)
 
-Era-adjustment is made via [Full House Modeling](https://arxiv.org/abs/2207.11332). This model computes era-adjusted statistics through a principled balancing of how well a player performed "vs their peers" and the size of the MLB eligible population.
+Era-adjustment is made via [Full House Modeling](https://arxiv.org/abs/2207.11332v2). This model computes era-adjusted statistics through a principled balancing of how well a player performed "vs their peers" and the size of the MLB eligible population.
 
 ## Version 2.0 (consistent with [website](https://eckeraadjustment.web.illinois.edu/))
 
