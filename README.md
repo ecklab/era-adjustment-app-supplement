@@ -17,8 +17,6 @@ The app contains several era-adjusted statistics for baseball players which are 
 
 For a fun read on the Full House Model see our three-part series: [article I](https://htmlpreview.github.io/?https://github.com/ecklab/era-adjustment-app-supplement/blob/main/writeups/article_I.html), [article II](https://htmlpreview.github.io/?https://github.com/ecklab/era-adjustment-app-supplement/blob/main/writeups/article_II.html), [article III](https://htmlpreview.github.io/?https://github.com/ecklab/era-adjustment-app-supplement/blob/main/writeups/article_III.html)
 
-Technical details on the Full House Model can be seen [here](https://arxiv.org/abs/2207.11332).
-
 Our original estimation of the talent pool can be seen [here](https://htmlpreview.github.io/?https://github.com/ecklab/era-adjustment-app-supplement/blob/main/writeups/MLB_eligible_pop.html).
 
 
