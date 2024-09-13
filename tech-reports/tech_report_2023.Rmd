@@ -2457,7 +2457,7 @@ kable(foo) %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 ```
 
-## Histogram of the p-values from Shapiro-Wilk test of normality on the BA distribution in each season in the Supplementary materials.
+## Figure 1: Histogram of the p-values from Shapiro-Wilk test of normality on the BA distribution in each season in the Supplementary materials.
 
 ```{r echo=FALSE}
 ggplot(normality, aes(x=p_value)) + geom_histogram(binwidth=0.02, aes(y=..density..)) +
@@ -14394,6 +14394,9 @@ career_ystar_HR <- career_HR
 career_ystar_trimmed_HR <- bat_career_nonpara
 ```
 
+### Table 5 : Top-30 era-adjusted batting rankings that include four additional hypothetical era-adjusted Babe Ruths in the supplementary materials
+
+
 ```{r cache=TRUE, echo=FALSE}
 ebWAR_ystar <- rbind(career_ystar_trimmed_bWAR %>% select(name, ebWAR), 
                     c(name = 'Babe Ruth 2', 
@@ -17361,14 +17364,14 @@ batters_talent_AVG <- do.call(rbind, mclapply(c(1911, 1977:1980, 1982:1989, 1997
 
 ```
 
-### Table 5: The value of the era-adjuted BA of Tony Gwynn in the 1997 season minus the era-adjusted BA of Ty Cobb in the 1911 season under different configurations in the supplementary materials
+### Table 6: The value of the era-adjuted BA of Tony Gwynn in the 1997 season minus the era-adjusted BA of Ty Cobb in the 1911 season under different configurations in the supplementary materials
 
 ```{r echo=FALSE}
 kable(season_diff) %>% 
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 ```
 
-### Table : The value of the era-adjuted BA of Jeff McNeil in the 2022 season minus the era-adjusted BA of Luis Arraez in the 2023 season under different configurations in the supplementary materials
+### Table 8 : The value of the era-adjuted BA of Jeff McNeil in the 2022 season minus the era-adjusted BA of Luis Arraez in the 2023 season under different configurations in the supplementary materials
 
 ```{r echo=FALSE}
 kable(season_diff_2) %>% 
@@ -17399,7 +17402,7 @@ batters_schell <- do.call(rbind, mclapply(years, mc.cores = ncores, FUN = functi
 
 ```
 
-```{r echo=FALSE}
+```{r cache=TRUE, echo=FALSE}
 ## historical league size
 batters_talent_bWAR <- do.call(rbind, mclapply(years, mc.cores = ncores, function(yy){
   talent_computing_nonpara(dataset = batters_schell, component_name = "bWAR", year = yy, ystar = thresh_fun(component = batters_schell %>% filter(full_time == 'Y', yearID == yy) %>% select(comp), component_name = 'bWAR'), alpha = 1.16) })) %>% arrange(-WAR_talent)
@@ -17773,7 +17776,7 @@ historical_0.5_career_bat <- career_bWAR
 historical_0.5_career_trimmed_bat <- bat_career_nonpara
 ```
 
-```{r echo=FALSE}
+```{r cache=TRUE, echo=FALSE}
 ## fixed league size
 batters_talent_bWAR <- do.call(rbind, mclapply(years, mc.cores = ncores, function(yy){
   talent_computing_nonpara_fixed(dataset = batters_schell, component_name = "bWAR", year = yy, ystar = thresh_fun(component = batters_schell %>% filter(full_time == 'Y', yearID == yy) %>% select(comp), component_name = 'bWAR'), alpha = 1.16) })) %>% arrange(-WAR_talent)
@@ -18095,7 +18098,7 @@ batters_schell <- batters_schell %>%
   mutate(pops = ifelse(lgID == "NL",pop,ALpop))
 ```
 
-```{r echo=FALSE}
+```{r cache=TRUE, echo=FALSE}
 ## historical league size
 batters_talent_bWAR <- do.call(rbind, mclapply(years, mc.cores = ncores, function(yy){
   talent_computing_nonpara(dataset = batters_schell, component_name = "bWAR", year = yy, ystar = thresh_fun(component = batters_schell %>% filter(full_time == 'Y', yearID == yy) %>% select(comp), component_name = 'bWAR'), alpha = 1.16) })) %>% arrange(-WAR_talent)
@@ -18407,7 +18410,7 @@ historical_0.75_career_bat <- career_bWAR
 historical_0.75_career_trimmed_bat <- bat_career_nonpara
 ```
 
-```{r echo=FALSE}
+```{r cache=TRUE, echo=FALSE}
 ## fixed league size
 batters_talent_bWAR <- do.call(rbind, mclapply(years, mc.cores = ncores, function(yy){
   talent_computing_nonpara_fixed(dataset = batters_schell, component_name = "bWAR", year = yy, ystar = thresh_fun(component = batters_schell %>% filter(full_time == 'Y', yearID == yy) %>% select(comp), component_name = 'bWAR'), alpha = 1.16) })) %>% arrange(-WAR_talent)
@@ -18728,7 +18731,7 @@ batters_schell <- batters_schell %>%
   mutate(pops = ifelse(lgID == "NL",pop,ALpop))
 ```
 
-```{r echo=FALSE}
+```{r cache=TRUE, echo=FALSE}
 ## historical league size
 batters_talent_bWAR <- do.call(rbind, mclapply(years, mc.cores = ncores, function(yy){
   talent_computing_nonpara(dataset = batters_schell, component_name = "bWAR", year = yy, ystar = thresh_fun(component = batters_schell %>% filter(full_time == 'Y', yearID == yy) %>% select(comp), component_name = 'bWAR'), alpha = 1.16) })) %>% arrange(-WAR_talent)
@@ -19040,7 +19043,7 @@ historical_1_career_bat <- career_bWAR
 historical_1_career_trimmed_bat <- bat_career_nonpara
 ```
 
-```{r echo=FALSE}
+```{r cache=TRUE, echo=FALSE}
 ## fixed league size
 batters_talent_bWAR <- do.call(rbind, mclapply(years, mc.cores = ncores, function(yy){
   talent_computing_nonpara_fixed(dataset = batters_schell, component_name = "bWAR", year = yy, ystar = thresh_fun(component = batters_schell %>% filter(full_time == 'Y', yearID == yy) %>% select(comp), component_name = 'bWAR'), alpha = 1.16) })) %>% arrange(-WAR_talent)
@@ -19359,7 +19362,7 @@ batters_schell <- batters_schell %>%
   mutate(pops = 1e6)
 ```
 
-```{r echo=FALSE}
+```{r cache=TRUE, echo=FALSE}
 ## historical league size
 batters_talent_bWAR <- do.call(rbind, mclapply(years, mc.cores = ncores, function(yy){
   talent_computing_nonpara(dataset = batters_schell, component_name = "bWAR", year = yy, ystar = thresh_fun(component = batters_schell %>% filter(full_time == 'Y', yearID == yy) %>% select(comp), component_name = 'bWAR'), alpha = 1.16) })) %>% arrange(-WAR_talent)
@@ -19671,7 +19674,7 @@ historical_constant_career_bat <- career_bWAR
 historical_constant_career_trimmed_bat <- bat_career_nonpara
 ```
 
-```{r echo=FALSE}
+```{r cache=TRUE, echo=FALSE}
 ## fixed league size
 batters_talent_bWAR <- do.call(rbind, mclapply(years, mc.cores = ncores, function(yy){
   talent_computing_nonpara_fixed(dataset = batters_schell, component_name = "bWAR", year = yy, ystar = thresh_fun(component = batters_schell %>% filter(full_time == 'Y', yearID == yy) %>% select(comp), component_name = 'bWAR'), alpha = 1.16) })) %>% arrange(-WAR_talent)
@@ -19992,7 +19995,7 @@ batters_schell <- batters_schell %>%
   mutate(pops = ifelse(lgID == "NL",pop,ALpop))
 ```
 
-```{r echo=FALSE}
+```{r cache=TRUE, echo=FALSE}
 ## historical league size
 batters_talent_bWAR <- do.call(rbind, mclapply(years, mc.cores = ncores, function(yy){
   talent_computing_nonpara(dataset = batters_schell, component_name = "bWAR", year = yy, ystar = thresh_fun(component = batters_schell %>% filter(full_time == 'Y', yearID == yy) %>% select(comp), component_name = 'bWAR'), alpha = 1.16) })) %>% arrange(-WAR_talent)
@@ -20304,7 +20307,7 @@ historical_erosion_career_bat <- career_bWAR
 historical_erosion_career_trimmed_bat <- bat_career_nonpara
 ```
 
-```{r echo=FALSE}
+```{r cache=TRUE, echo=FALSE}
 ## fixed league size
 batters_talent_bWAR <- do.call(rbind, mclapply(years, mc.cores = ncores, function(yy){
   talent_computing_nonpara_fixed(dataset = batters_schell, component_name = "bWAR", year = yy, ystar = thresh_fun(component = batters_schell %>% filter(full_time == 'Y', yearID == yy) %>% select(comp), component_name = 'bWAR'), alpha = 1.16) })) %>% arrange(-WAR_talent)
@@ -23587,7 +23590,7 @@ fixed_erosion_career_pit <- career_bWAR
 fixed_erosion_career_trimmed_pit <- pit_career
 ```
 
-```{r echo=FALSE}
+```{r cache=TRUE, echo=FALSE}
 career_bWAR_diff <- c()
 Willie_Mays <- historical_0.5_career_bat %>% filter(playerID == 'mayswi01')
 Babe_Ruth_bat <- historical_0.5_career_bat %>% filter(playerID == 'ruthba01')
@@ -23615,7 +23618,7 @@ season_bWAR_diff <- rbind(season_bWAR_diff,
                                                           Mike_Trout_2014$adj_bWAR, 2)))
 ```
 
-```{r echo=FALSE}
+```{r cache=TRUE, echo=FALSE}
 Willie_Mays <- fixed_0.5_career_bat %>% filter(playerID == 'mayswi01')
 Babe_Ruth_bat <- fixed_0.5_career_bat %>% filter(playerID == 'ruthba01')
 Babe_Ruth_pit <- fixed_0.5_career_pit %>% filter(playerID == 'ruthba01')
@@ -23642,7 +23645,7 @@ season_bWAR_diff <- rbind(season_bWAR_diff,
 
 ```
 
-```{r echo=FALSE}
+```{r cache=TRUE, echo=FALSE}
 Willie_Mays <- historical_0.75_career_bat %>% filter(playerID == 'mayswi01')
 Babe_Ruth_bat <- historical_0.75_career_bat %>% filter(playerID == 'ruthba01')
 Babe_Ruth_pit <- historical_0.75_career_pit %>% filter(playerID == 'ruthba01')
@@ -23669,7 +23672,7 @@ season_bWAR_diff <- rbind(season_bWAR_diff,
 
 ```
 
-```{r echo=FALSE}
+```{r cache=TRUE, echo=FALSE}
 Willie_Mays <- fixed_0.75_career_bat %>% filter(playerID == 'mayswi01')
 Babe_Ruth_bat <- fixed_0.75_career_bat %>% filter(playerID == 'ruthba01')
 Babe_Ruth_pit <- fixed_0.75_career_pit %>% filter(playerID == 'ruthba01')
@@ -23696,7 +23699,7 @@ season_bWAR_diff <- rbind(season_bWAR_diff,
 
 ```
 
-```{r echo=FALSE}
+```{r cache=TRUE, echo=FALSE}
 Willie_Mays <- historical_1_career_bat %>% filter(playerID == 'mayswi01')
 Babe_Ruth_bat <- historical_1_career_bat %>% filter(playerID == 'ruthba01')
 Babe_Ruth_pit <- historical_1_career_pit %>% filter(playerID == 'ruthba01')
@@ -23723,7 +23726,7 @@ season_bWAR_diff <- rbind(season_bWAR_diff,
 
 ```
 
-```{r echo=FALSE}
+```{r cache=TRUE, echo=FALSE}
 Willie_Mays <- fixed_1_career_bat %>% filter(playerID == 'mayswi01')
 Babe_Ruth_bat <- fixed_1_career_bat %>% filter(playerID == 'ruthba01')
 Babe_Ruth_pit <- fixed_1_career_pit %>% filter(playerID == 'ruthba01')
@@ -23750,7 +23753,7 @@ season_bWAR_diff <- rbind(season_bWAR_diff,
 
 ```
 
-```{r echo=FALSE}
+```{r cache=TRUE, echo=FALSE}
 Willie_Mays <- historical_constant_career_bat %>% filter(playerID == 'mayswi01')
 Babe_Ruth_bat <- historical_constant_career_bat %>% filter(playerID == 'ruthba01')
 Babe_Ruth_pit <- historical_constant_career_pit %>% filter(playerID == 'ruthba01')
@@ -23777,7 +23780,7 @@ season_bWAR_diff <- rbind(season_bWAR_diff,
 
 ```
 
-```{r echo=FALSE}
+```{r cache=TRUE, echo=FALSE}
 Willie_Mays <- fixed_constant_career_bat %>% filter(playerID == 'mayswi01')
 Babe_Ruth_bat <- fixed_constant_career_bat %>% filter(playerID == 'ruthba01')
 Babe_Ruth_pit <- fixed_constant_career_pit %>% filter(playerID == 'ruthba01')
@@ -23804,7 +23807,7 @@ season_bWAR_diff <- rbind(season_bWAR_diff,
 
 ```
 
-```{r echo=FALSE}
+```{r cache=TRUE, echo=FALSE}
 Willie_Mays <- historical_erosion_career_bat %>% filter(playerID == 'mayswi01')
 Babe_Ruth_bat <- historical_erosion_career_bat %>% filter(playerID == 'ruthba01')
 Babe_Ruth_pit <- historical_erosion_career_pit %>% filter(playerID == 'ruthba01')
@@ -23831,7 +23834,7 @@ season_bWAR_diff <- rbind(season_bWAR_diff,
 
 ```
 
-```{r echo=FALSE}
+```{r cache=TRUE, echo=FALSE}
 Willie_Mays <- fixed_erosion_career_bat %>% filter(playerID == 'mayswi01')
 Babe_Ruth_bat <- fixed_erosion_career_bat %>% filter(playerID == 'ruthba01')
 Babe_Ruth_pit <- fixed_erosion_career_pit %>% filter(playerID == 'ruthba01')
@@ -23863,6 +23866,9 @@ season_bWAR_diff <- rbind(season_bWAR_diff,
 kable(career_bWAR_diff) %>% 
   kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 ```
+
+### Table 9 : The value of the era-adjuted bWAR of Mike Trout in the 2012 season minus the era-adjusted bWAR of Mike Trout in the 2014 season under different configurations in the supplementary materials
+
 
 ```{r echo=FALSE}
 kable(season_bWAR_diff) %>% 
@@ -33167,7 +33173,7 @@ season_diff_HR <- rbind(season_diff_HR,
                                         ))
 ```
 
-## Table 6: The value of the era-adjusted AB per HR of Barry Bonds in the 2001 season minus the era-adjusted AB per HR of Babe Ruth in the 1920 season under different configurations in the supplementary materials
+## Table 7: The value of the era-adjusted AB per HR of Barry Bonds in the 2001 season minus the era-adjusted AB per HR of Babe Ruth in the 1920 season under different configurations in the supplementary materials
 
 ```{r echo=FALSE}
 kable(season_diff_HR) %>% 
@@ -34220,7 +34226,7 @@ ggplot(max_talent, aes(x = max_talent, y = max_comp, label = name_year)) +
 
 ```
 
-## Table 7: Whether or not the distribution of the batting statistics is parametric or nonparametric affects the top 25 career batting averages and top 25 four-year peaks by batting average.
+## Table 10: Whether or not the distribution of the batting statistics is parametric or nonparametric affects the top 25 career batting averages and top 25 four-year peaks by batting average.
 
 ```{r cache=TRUE, echo=FALSE}
 load("pop_data.RData")
