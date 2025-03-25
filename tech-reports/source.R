@@ -1043,3 +1043,109 @@ career_talent_nonpara_normal <- function(dataset, component_name, snippet){
 }
 
 #############
+
+#############
+
+# computes their latent talents using non-parametric distribution measuring the components
+# when some certain talents are removed from the talent pool
+talent_computing_nonpara_rm <- function(dataset, component_name, year, ystar, alpha, rm){
+  
+  Ftilde <- function(y, t, ystar, component_name){
+    y <- sort(y)
+    n <- length(y)
+    ytilde <- rep(0, n + 1)
+    
+    if (component_name == 'bWAR' | component_name == 'fWAR' | component_name == 'ERA') {
+      ytilde[1] <- y[1] - (y[2] - y[1])
+    }
+    if (component_name == 'HR'| component_name == 'BB') {
+      # since the minimal HR is greater or equal to 0.
+      ytilde[1] <- 0
+    }
+    if (component_name == 'bWAR_p' | component_name == 'fWAR_p') {
+      ytilde[1] <- y[1] - (y[2] - y[1])/10
+    }
+    if (component_name == 'SO' | component_name == 'AVG') {
+      ytilde[1] <- ifelse(y[1] - (y[2] - y[1]) < 0, 0, y[1] - (y[2] - y[1]) )
+    }
+    
+    ytilde[n+1] <- y[n] + ystar
+    ytilde[2:n] <- unlist(lapply(2:n, function(j){
+      (y[j]+y[j-1])/2
+    }))
+    
+    if (t >= ytilde[n+1]) {
+      1 - 0.1^7
+    } else if (t <= ytilde[1]) {
+      0
+    } else {
+      j <- length(which(ytilde < t))
+      (j - 1) / n + (t - ytilde[j]) / (n*(ytilde[j+1] - ytilde[j]))
+    }
+    
+  }
+  
+  Aptitude_nonpara <- function(p, alpha, npop){
+    
+    # converts order stats to their percentiles
+    order_pbino <- function(p = 0, k = 1, n = 1e4){
+      pbinom(k - 1, prob = p, size = n, lower.tail = FALSE)
+    }
+    
+    # converts a vector of order stats 
+    # to their percentiles. This vector should be the entire 
+    # sample sorted in increasing order
+    p <- sort(p) # just in case
+    n <- length(p)
+    u = unlist(lapply(1:n, function(j){
+      #order_pbino(p[j], k = 251-n+j, n = 251)
+      order_pbino(p[j], k = j, n = n)
+    }))
+    
+    # transforms percentiles from order stats (in increasing order)
+    # to Pareto values corresponding to the general population 
+    # of a greater than or equal to size
+    # default alpha is that of the Pareto principle 80-20
+    n <- length(u)
+    if(length(npop) == 1) npop <- rep(npop, n)
+    rm_length <- length(rm)
+    order_alpha <- npop - sort(c(1:(n + rm_length))[-rm], 
+                               decreasing = TRUE) +1
+    order_beta <- npop + 1 - order_alpha
+    unlist(lapply(1:n, function(j){
+      qPareto(qbeta(u[j], order_alpha[j] , order_beta[j]), t = 1, alpha = alpha)
+      #qPareto(qbeta(u[j], j + npop[j] -n + 251-n , n + 1 - j), t = 1, alpha = alpha)
+    }))
+  }
+  
+  foo <- dataset %>% filter(yearID == year) %>% 
+    arrange(comp) 
+  bar <- foo %>% filter(full_time == 'Y')
+  full_comp <- bar$comp
+  ## batter WAR talent
+  bar <- bar %>% 
+    mutate(WAR_talent = 
+             Aptitude_nonpara(p = unlist(lapply(comp, function(xx) 
+               Ftilde(y = comp, t = xx, ystar = ystar, component_name = component_name))), alpha = alpha, npop = pops))
+  
+  max_WAR_talent <- max(bar$WAR_talent) - 1
+  range <- which(!(foo$playerID %in% bar$playerID))
+  
+  ## using the distribution from full time players
+  bar <- rbind(bar, do.call(rbind, lapply(range, function(j){
+    rbind(bar %>% dplyr::select(-WAR_talent), foo[j, ]) %>% arrange(comp) %>%
+      mutate(WAR_talent = Aptitude_nonpara(p = unlist(lapply(comp, function(xx) 
+        Ftilde(y = full_comp, t = xx, ystar = ystar, component_name = component_name))), alpha = alpha, npop = pops)) %>%
+      filter(full_time == 'N') %>% 
+      mutate(WAR_talent = ifelse(WAR_talent > max_WAR_talent+1, max_WAR_talent, WAR_talent))
+  })))
+  bar %>% mutate(ystar = ystar)
+}
+
+#############
+
+
+
+
+
+
