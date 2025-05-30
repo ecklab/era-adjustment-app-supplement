@@ -1,7 +1,7 @@
 
 # Supplemental materials for our era-adjusted baseball statistics [website](https://eckeraadjustment.web.illinois.edu/)
 
-Era adjustment is made via [Full House Modeling](https://arxiv.org/abs/2207.11332v2). This model computes era-adjusted statistics through a principled balancing of how well a player performed "vs their peers" and the size of the MLB talent pool.
+Era adjustment is made via [Full House Modeling](https://projecteuclid.org/journals/annals-of-applied-statistics/volume-19/issue-2/Comparing-baseball-players-across-eras-via-novel-Full-House-Modeling/10.1214/24-AOAS1992.short). This model computes era-adjusted statistics through a principled balancing of how well a player performed "vs their peers" and the size of the MLB talent pool.
 
 ## Version 2.1 (consistent with [website](https://eckeraadjustment.web.illinois.edu/))
 
@@ -9,6 +9,7 @@ We present an updated version of the website with:
 
 - Data through 2024 season
 - Better UI on mobile devices
+- Added loess smoothing of home run counts for Dead Ball era players
 
 ## Version 2.0 (consistent with [paper](https://arxiv.org/abs/2207.11332v2))
 
