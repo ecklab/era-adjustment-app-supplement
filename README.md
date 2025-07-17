@@ -7,6 +7,7 @@ Era adjustment is made via [Full House Modeling](https://projecteuclid.org/journ
 
 We present an updated version of the website with:
 
+- An updated [writeup](https://htmlpreview.github.io/?https://github.com/ecklab/era-adjustment-app-supplement/blob/main/writeups/era_adjusted_V2.1.html) that highlights some results and discussions based on our era-adjusted statistics.
 - Data through 2024 season
 - Better UI on mobile devices
 - Added loess smoothing of home run counts for Dead Ball era players
