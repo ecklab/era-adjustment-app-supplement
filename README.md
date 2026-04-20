@@ -3,7 +3,18 @@
 
 Era adjustment is made via [Full House Modeling](https://projecteuclid.org/journals/annals-of-applied-statistics/volume-19/issue-2/Comparing-baseball-players-across-eras-via-novel-Full-House-Modeling/10.1214/24-AOAS1992.short). This model computes era-adjusted statistics through a principled balancing of how well a player performed "vs their peers" and the size of the MLB talent pool.
 
-## Version 2.1 (consistent with [website](https://eckeraadjustment.web.illinois.edu/))
+
+## Version 3.0 (consistent with [website](https://eckeraadjustment.web.illinois.edu/))
+
+We present an updated version of the website with:
+
+- New [talent pool calculation](https://htmlpreview.github.io/?https://github.com/ecklab/era-adjustment-app-supplement/blob/main/writeups/MLB-talent-pool-v3.0.html). This estimate is similar to the [previous version](https://htmlpreview.github.io/?https://github.com/ecklab/era-adjustment-app-supplement/blob/main/writeups/MLBeligiblepop.html). The main change is that we change the reference group from aged 20-29 eligible males to aged 20-29 eligible white males. Results do not change too much.
+- New stats: 2B, 3B, SLG, OPS, JAWS
+- Data through 2025 season
+- Better UI, comprehensive leaderboards with stat download, and player-specific linking 
+
+
+## Version 2.1
 
 We present an updated version of the website with:
 
