@@ -8,7 +8,7 @@ Era adjustment is made via [Full House Modeling](https://projecteuclid.org/journ
 
 We present an updated version of the website with:
 
-- New [talent pool calculation](https://htmlpreview.github.io/?https://github.com/ecklab/era-adjustment-app-supplement/blob/main/writeups/MLB-talent-pool-v3.0.html). This estimate is similar to the [previous version](https://htmlpreview.github.io/?https://github.com/ecklab/era-adjustment-app-supplement/blob/main/writeups/MLBeligiblepop.html). The main change is that we change the reference group from aged 20-29 eligible males to aged 20-29 eligible white males. Results do not change too much.
+- New [talent pool calculation](https://htmlpreview.github.io/?https://github.com/ecklab/era-adjustment-app-supplement/blob/main/writeups/MLB-talent-pool-v3.0.html). This estimate is similar to the [previous version](https://htmlpreview.github.io/?https://github.com/ecklab/era-adjustment-app-supplement/blob/main/writeups/MLBeligiblepop.html). The main change is that we change the reference group from aged 20-29 eligible males to aged 20-29 eligible white males. Results do not change too much. The change allows to also calculate a talent pool for the Negro League!
 - New stats: 2B, 3B, SLG, OPS, JAWS
 - Data through 2025 season
 - Better UI, comprehensive leaderboards with stat download, and player-specific linking 
