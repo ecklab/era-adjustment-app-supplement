@@ -1,10 +1,17 @@
 
-# Supplemental materials for our era-adjusted baseball statistics [website](https://eckeraadjustment.web.illinois.edu/)
+# Supplemental Materials for our Era-Adjusted Baseball Statistics [website](https://eckeraadjustment.web.illinois.edu/)
 
 Era adjustment is made via [Full House Modeling](https://projecteuclid.org/journals/annals-of-applied-statistics/volume-19/issue-2/Comparing-baseball-players-across-eras-via-novel-Full-House-Modeling/10.1214/24-AOAS1992.short). This model computes era-adjusted statistics through a principled balancing of how well a player performed "vs their peers" and the size of the MLB talent pool.
 
 
-## Version 3.0 (consistent with [website](https://eckeraadjustment.web.illinois.edu/))
+## Version 3.1 (consistent with [website](https://eckeraadjustment.web.illinois.edu/))
+
+We make the following update to era-adjusted baseball statistics:
+
+- The robust tail probability modeling in the [fullhouse](github.com/DEck13/fullhouse/tree/main) package implemented in version 3.0 is replaced with the legacy tail probability modeling from version 2.1. This change was made to preserve all-time outlying seasons. More explanation can be found in this [modeling report](https://htmlpreview.github.io/?https://github.com/ecklab/era-adjustment-app-supplement/blob/main/tech-reports/modeling-report.html)
+
+
+## Version 3.0 
 
 We present an updated version of the website with:
 
