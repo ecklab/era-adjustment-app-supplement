@@ -4,6 +4,11 @@
 Era adjustment is made via [Full House Modeling](https://projecteuclid.org/journals/annals-of-applied-statistics/volume-19/issue-2/Comparing-baseball-players-across-eras-via-novel-Full-House-Modeling/10.1214/24-AOAS1992.short). This model computes era-adjusted statistics through a principled balancing of how well a player performed "vs their peers" and the size of the MLB talent pool.
 
 
+## Version 3.2 (consistent with [website](https://eckeraadjustment.web.illinois.edu/))
+
+We present an updated version of the website with 2026 era-adjusted baseball statistics included.
+
+
 ## Version 3.1 (consistent with [website](https://eckeraadjustment.web.illinois.edu/))
 
 We make the following update to era-adjusted baseball statistics:
